@@ -1,0 +1,264 @@
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: #0f172a;
+  color: #e2e8f0;
+  min-height: 100vh;
+}
+
+.app {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.header h1 {
+  text-align: center;
+  margin: 8px 0 12px;
+  font-size: 1.6rem;
+}
+
+.sound-toggle {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.tabs button {
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 1px solid #334155;
+  background: #1e293b;
+  color: #cbd5e1;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all .15s;
+}
+
+.tabs button.active {
+  background: #3b82f6;
+  color: #fff;
+  border-color: #3b82f6;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form, .card, .timer-card {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.form h3, .card-head strong {
+  margin: 0 0 12px;
+  font-size: 1.1rem;
+}
+
+.form label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+  color: #94a3b8;
+}
+
+input, textarea, select {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #334155;
+  background: #0f172a;
+  color: #e2e8f0;
+  font-size: 0.95rem;
+  font-family: inherit;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 8px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.actions.center {
+  justify-content: center;
+}
+
+.btn {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid #475569;
+  background: #334155;
+  color: #e2e8f0;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: opacity .15s, transform .05s;
+}
+
+.btn:hover { opacity: 0.85; }
+.btn:active { transform: scale(0.97); }
+
+.btn.primary {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: #fff;
+}
+
+.btn.danger {
+  background: #7f1d1d;
+  border-color: #991b1b;
+}
+
+.btn.small { padding: 4px 8px; font-size: 0.8rem; }
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.badges {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 8px 0;
+}
+
+.badges span {
+  font-size: 0.8rem;
+  background: #0f172a;
+  border: 1px solid #334155;
+  padding: 3px 8px;
+  border-radius: 6px;
+  color: #94a3b8;
+}
+
+.muted { color: #94a3b8; }
+.small { font-size: 0.85rem; }
+
+.workout-add {
+  display: flex;
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.workout-add select { flex: 1; }
+
+.workout-items {
+  padding-left: 20px;
+  margin: 8px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.workout-items li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #0f172a;
+  border-radius: 8px;
+  padding: 6px 10px;
+}
+
+.workout-preview {
+  margin: 8px 0;
+  padding-left: 18px;
+  color: #94a3b8;
+  font-size: 0.88rem;
+}
+
+/* ---------- Timer ---------- */
+.timer-card {
+  text-align: center;
+  padding: 24px;
+  position: relative;
+}
+
+.timer-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: #94a3b8;
+  margin-bottom: 8px;
+}
+
+.timer-card h2 {
+  font-size: 1.4rem;
+  margin: 4px 0 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.timer-name {
+  font-size: 1.1rem;
+  color: #cbd5e1;
+  margin-bottom: 16px;
+}
+
+.circle-wrap {
+  position: relative;
+  width: 260px;
+  height: 260px;
+  margin: 0 auto 16px;
+}
+
+.circle {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.circle-bg {
+  fill: none;
+  stroke: #0f172a;
+  stroke-width: 10;
+}
+
+.circle-fg {
+  fill: none;
+  stroke-width: 10;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1s linear, stroke 0.3s;
+}
+
+.circle-time {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4rem;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+
+.finished h2 { margin-bottom: 16px; }
