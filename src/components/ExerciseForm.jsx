@@ -1,4 +1,5 @@
 import { useState } from "react";
+import TimeInput from "./TimeInput";
 
 const empty = {
   name: "",
@@ -14,11 +15,15 @@ export default function ExerciseForm({ onSubmit, initial = null, onCancel }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    const numeric = ["prepare", "exercise", "rest", "rounds"].includes(name);
+    const numeric = ["rounds"].includes(name);
     setForm((prev) => ({
       ...prev,
       [name]: numeric ? Number(value) : value,
     }));
+  };
+
+  const setTime = (field) => (seconds) => {
+    setForm((prev) => ({ ...prev, [field]: seconds }));
   };
 
   const handleSubmit = (e) => {
@@ -54,38 +59,19 @@ export default function ExerciseForm({ onSubmit, initial = null, onCancel }) {
         />
       </label>
 
-      <div className="grid-4">
-        <label>
-          Подготовка (сек)
-          <input
-            type="number"
-            min="0"
-            name="prepare"
-            value={form.prepare}
-            onChange={handleChange}
-          />
-        </label>
-        <label>
-          Упражнение (сек)
-          <input
-            type="number"
-            min="1"
-            name="exercise"
-            value={form.exercise}
-            onChange={handleChange}
-          />
-        </label>
-        <label>
-          Отдых (сек)
-          <input
-            type="number"
-            min="0"
-            name="rest"
-            value={form.rest}
-            onChange={handleChange}
-          />
-        </label>
-        <label>
+      <div className="time-grid">
+        <TimeInput
+          label="Подготовка"
+          value={form.prepare}
+          onChange={setTime("prepare")}
+        />
+        <TimeInput
+          label="Упражнение"
+          value={form.exercise}
+          onChange={setTime("exercise")}
+        />
+        <TimeInput label="Отдых" value={form.rest} onChange={setTime("rest")} />
+        <label className="rounds-label">
           Повторений
           <input
             type="number"

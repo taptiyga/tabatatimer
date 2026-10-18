@@ -14,13 +14,20 @@ export default function WorkoutList({
       {workouts.map((w) => (
         <li key={w.id} className="card">
           <div className="card-head">
-            <strong>{w.name}</strong>
+            <strong className="truncate" title={w.name}>
+              {w.name}
+            </strong>
             <span className="muted small">{w.items.length} упражнений</span>
           </div>
           <ul className="workout-preview">
             {w.items.map((it, i) => {
               const ex = exercises.find((e) => e.id === it.exerciseId);
-              return <li key={i}>{ex ? ex.name : "—"}</li>;
+              const label = ex ? ex.name : "—";
+              return (
+                <li key={i} className="truncate" title={label}>
+                  {label}
+                </li>
+              );
             })}
           </ul>
           <div className="actions">

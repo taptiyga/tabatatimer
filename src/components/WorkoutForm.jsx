@@ -41,6 +41,8 @@ export default function WorkoutForm({
     }
   };
 
+  const selectedName = exercises.find((ex) => ex.id === selectedId)?.name || "";
+
   return (
     <form className="form" onSubmit={handleSubmit}>
       <h3>{initial ? "Редактировать тренировку" : "Новая тренировка"}</h3>
@@ -59,6 +61,7 @@ export default function WorkoutForm({
         <select
           value={selectedId}
           onChange={(e) => setSelectedId(e.target.value)}
+          title={selectedName}
         >
           {exercises.map((ex) => (
             <option key={ex.id} value={ex.id}>
@@ -82,7 +85,9 @@ export default function WorkoutForm({
             const ex = exercises.find((e) => e.id === item.exerciseId);
             return (
               <li key={i}>
-                <span>{ex ? ex.name : "Удалено"}</span>
+                <span className="truncate" title={ex ? ex.name : "Удалено"}>
+                  {ex ? ex.name : "Удалено"}
+                </span>
                 <div className="actions">
                   <button
                     type="button"

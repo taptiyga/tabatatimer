@@ -1,5 +1,6 @@
 const EXERCISES_KEY = "tabata_exercises";
 const WORKOUTS_KEY = "tabata_workouts";
+const SOUND_KEY = "tabata_sound_enabled";
 
 export const loadExercises = () => {
   try {
@@ -24,3 +25,7 @@ export const loadWorkouts = () => {
 export const saveWorkouts = (workouts) => {
   localStorage.setItem(WORKOUTS_KEY, JSON.stringify(workouts));
 };
+
+export const loadSound = () => localStorage.getItem(SOUND_KEY) !== "false";
+export const saveSound = (enabled) =>
+  localStorage.setItem(SOUND_KEY, String(enabled));

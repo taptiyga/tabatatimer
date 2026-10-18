@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useTimer } from "../hooks/useTimer";
 import { unlockAudio } from "../utils/sounds";
+import { fmtClock } from "../utils/format";
 
 const LABELS = { prepare: "Подготовка", exercise: "Упражнение", rest: "Отдых" };
 const COLORS = { prepare: "#f59e0b", exercise: "#ef4444", rest: "#10b981" };
@@ -30,7 +31,7 @@ export default function Timer({
   useEffect(() => {
     if (startSteps && startSteps !== lastStepsRef.current) {
       lastStepsRef.current = startSteps;
-      unlockAudio(); // «будим» AudioContext на пользовательском действии
+      unlockAudio();
       start(startSteps);
       clearStartSteps?.();
     }
@@ -96,7 +97,7 @@ export default function Timer({
             }}
           />
         </svg>
-        <div className="circle-time">{timeLeft}</div>
+        <div className="circle-time">{fmtClock(timeLeft)}</div>
       </div>
 
       <div className="actions center">

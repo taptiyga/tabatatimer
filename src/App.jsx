@@ -13,14 +13,13 @@ import {
   saveExercises,
   loadWorkouts,
   saveWorkouts,
+  loadSound,
+  saveSound,
 } from "./utils/storage";
 import "./App.css";
 
 const uid = () =>
   Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-
-const SOUND_KEY = "tabata_sound_enabled";
-const loadSound = () => localStorage.getItem(SOUND_KEY) !== "false";
 
 export default function App() {
   const [tab, setTab] = useState("timer");
@@ -33,11 +32,8 @@ export default function App() {
 
   useEffect(() => saveExercises(exercises), [exercises]);
   useEffect(() => saveWorkouts(workouts), [workouts]);
-  useEffect(() => {
-    localStorage.setItem(SOUND_KEY, String(soundEnabled));
-  }, [soundEnabled]);
+  useEffect(() => saveSound(soundEnabled), [soundEnabled]);
 
-  // ---------- Упражнения ----------
   const addExercise = (data) => {
     setExercises((prev) => [...prev, { ...data, id: uid() }]);
     setEditingExercise(null);
@@ -65,7 +61,6 @@ export default function App() {
     );
   };
 
-  // ---------- Тренировки ----------
   const addWorkout = (data) => {
     setWorkouts((prev) => [...prev, { ...data, id: uid() }]);
     setEditingWorkout(null);
@@ -83,7 +78,6 @@ export default function App() {
     setWorkouts((prev) => prev.filter((w) => w.id !== id));
   };
 
-  // ---------- Старт таймера ----------
   const startExercise = (ex) => {
     setPendingSteps(buildStepsForExercise(ex));
     setTab("timer");

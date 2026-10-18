@@ -1,3 +1,5 @@
+import { fmtShort } from "../utils/format";
+
 export default function ExerciseList({ exercises, onEdit, onDelete, onStart }) {
   if (!exercises.length) {
     return <p className="muted">Упражнений пока нет. Создайте первое!</p>;
@@ -8,13 +10,19 @@ export default function ExerciseList({ exercises, onEdit, onDelete, onStart }) {
       {exercises.map((ex) => (
         <li key={ex.id} className="card">
           <div className="card-head">
-            <strong>{ex.name}</strong>
+            <strong className="truncate" title={ex.name}>
+              {ex.name}
+            </strong>
           </div>
-          {ex.description && <p className="muted small">{ex.description}</p>}
+          {ex.description && (
+            <p className="muted small truncate" title={ex.description}>
+              {ex.description}
+            </p>
+          )}
           <div className="badges">
-            <span>⏱ подготовка {ex.prepare}с</span>
-            <span>💪 {ex.exercise}с</span>
-            <span>😮‍💨 отдых {ex.rest}с</span>
+            <span>⏱ {fmtShort(ex.prepare)}</span>
+            <span>💪 {fmtShort(ex.exercise)}</span>
+            <span>😮‍💨 {fmtShort(ex.rest)}</span>
             <span>🔁 {ex.rounds}</span>
           </div>
           <div className="actions">
