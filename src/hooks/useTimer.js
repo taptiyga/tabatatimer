@@ -6,6 +6,7 @@ import {
   playTick,
   playFinish,
 } from "../utils/sounds";
+import { requestWakeLock, releaseWakeLock } from "../utils/wakeLock";
 
 export function useTimer({ soundEnabled = true } = {}) {
   const [steps, setSteps] = useState([]);
@@ -19,7 +20,7 @@ export function useTimer({ soundEnabled = true } = {}) {
   const soundRef = useRef(soundEnabled);
   const lastTickRef = useRef(null);
 
-  // Актуальные значения шага — в ref, чтобы интервал не пересоздавался
+  // Актуальные значения — в ref, чтобы интервал не пересоздавался
   const stepsRef = useRef(steps);
   const indexRef = useRef(currentIndex);
   const timeLeftRef = useRef(timeLeft);
@@ -64,16 +65,19 @@ export function useTimer({ soundEnabled = true } = {}) {
     setIsRunning(true);
     lastTickRef.current = null;
     playForStep(newSteps[0]);
+    requestWakeLock();
   }, []);
 
   const pause = useCallback(() => {
     setIsRunning(false);
     clearIntervalSafe();
+    releaseWakeLock();
   }, []);
 
   const resume = useCallback(() => {
     if (stepsRef.current.length > 0 && !finishedRef.current) {
       setIsRunning(true);
+      requestWakeLock();
     }
   }, []);
 
@@ -88,11 +92,33 @@ export function useTimer({ soundEnabled = true } = {}) {
     setSteps([]);
     stepsRef.current = [];
     lastTickRef.current = null;
+    releaseWakeLock();
   }, []);
 
   const skip = useCallback(() => {
     setTimeLeft(0);
     timeLeftRef.current = 0;
+  }, []);
+
+  // Назад к предыдущему шагу.
+  // Если это первый шаг — перезапускаем таймер с самого начала.
+  const prevStep = useCallback(() => {
+    const list = stepsRef.current;
+    if (!list.length) return;
+
+    const idx = indexRef.current;
+    const targetIdx = Math.max(0, idx - 1);
+    const targetStep = list[targetIdx];
+    if (!targetStep) return;
+
+    indexRef.current = targetIdx;
+    timeLeftRef.current = targetStep.duration;
+    lastTickRef.current = null;
+
+    setCurrentIndex(targetIdx);
+    setTimeLeft(targetStep.duration);
+    setIsFinished(false);
+    // Звук не играем
   }, []);
 
   // Единый таймер: тик и переход к следующему шагу.
@@ -132,6 +158,7 @@ export function useTimer({ soundEnabled = true } = {}) {
           setIsRunning(false);
           setIsFinished(true);
           if (soundRef.current) playFinish();
+          releaseWakeLock();
         }
         return;
       }
@@ -162,6 +189,7 @@ export function useTimer({ soundEnabled = true } = {}) {
     resume,
     stop,
     skip,
+    prevStep,
     totalSteps,
   };
 }

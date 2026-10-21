@@ -5,6 +5,7 @@ import { fmtClock } from "../utils/format";
 
 const LABELS = { prepare: "Подготовка", exercise: "Упражнение", rest: "Отдых" };
 const COLORS = { prepare: "#f59e0b", exercise: "#ef4444", rest: "#10b981" };
+const CIRCUMFERENCE = 2 * Math.PI * 54;
 
 export default function Timer({
   startSteps,
@@ -23,6 +24,7 @@ export default function Timer({
     resume,
     stop,
     skip,
+    prevStep,
     totalSteps,
   } = timer;
 
@@ -42,7 +44,13 @@ export default function Timer({
     resume();
   };
 
-  const progress = currentStep ? 1 - timeLeft / currentStep.duration : 0;
+  const progress = currentStep
+    ? currentStep.duration === 0
+      ? 1
+      : Math.min(1, Math.max(0, 1 - timeLeft / currentStep.duration))
+    : 0;
+
+  const dashOffset = CIRCUMFERENCE * (1 - progress);
 
   if (isFinished) {
     return (
@@ -92,8 +100,8 @@ export default function Timer({
             className="circle-fg"
             style={{
               stroke: COLORS[currentStep.type],
-              strokeDasharray: 339.292,
-              strokeDashoffset: 339.292 * (1 - progress),
+              strokeDasharray: CIRCUMFERENCE,
+              strokeDashoffset: dashOffset,
             }}
           />
         </svg>
@@ -101,6 +109,13 @@ export default function Timer({
       </div>
 
       <div className="actions center">
+        <button
+          className="btn"
+          onClick={prevStep}
+          title="Назад к предыдущему шагу (на первом шаге — сначала)"
+        >
+          ⏮ Назад
+        </button>
         {isRunning ? (
           <button className="btn" onClick={pause}>
             ⏸ Пауза
