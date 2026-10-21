@@ -34,6 +34,19 @@ export default function App() {
   useEffect(() => saveWorkouts(workouts), [workouts]);
   useEffect(() => saveSound(soundEnabled), [soundEnabled]);
 
+  // Запрос постоянного хранилища (защита от автоматической очистки)
+  useEffect(() => {
+    if (navigator.storage && navigator.storage.persist) {
+      navigator.storage.persist().then((persistent) => {
+        console.log(
+          persistent
+            ? "Хранилище защищено от автоматической очистки."
+            : "Постоянное хранилище не предоставлено. Данные могут быть очищены при нехватке места.",
+        );
+      });
+    }
+  }, []);
+
   const addExercise = (data) => {
     setExercises((prev) => [...prev, { ...data, id: uid() }]);
     setEditingExercise(null);
@@ -88,10 +101,75 @@ export default function App() {
     setTab("timer");
   };
 
+  // Экспорт всех данных в JSON-файл
+  const exportData = () => {
+    const data = {
+      exercises,
+      workouts,
+      soundEnabled,
+      exportedAt: new Date().toISOString(),
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `tabata-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  // Импорт данных из файла
+  const importData = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    event.target.value = ""; // сброс сразу, чтобы можно было выбрать тот же файл повторно
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = JSON.parse(e.target.result);
+        if (!data.exercises || !data.workouts) {
+          alert("Неверный формат файла");
+          return;
+        }
+        if (window.confirm("Импорт заменит все текущие данные. Продолжить?")) {
+          setExercises(data.exercises);
+          setWorkouts(data.workouts);
+          if (typeof data.soundEnabled === "boolean") {
+            setSoundEnabled(data.soundEnabled);
+          }
+          alert("Данные успешно импортированы");
+        }
+      } catch {
+        alert("Не удалось прочитать файл");
+      }
+    };
+    reader.readAsText(file);
+  };
+
   return (
     <div className="app">
       <header className="header">
         <h1>🏋️ Tabata Timer</h1>
+
+        <div className="backup-actions">
+          <button className="backup-btn export" onClick={exportData}>
+            <span className="icon">📥</span>
+            Экспорт
+          </button>
+          <label className="backup-btn import">
+            <span className="icon">📤</span>
+            Импорт
+            <input
+              type="file"
+              accept=".json"
+              onChange={importData}
+              style={{ display: "none" }}
+            />
+          </label>
+        </div>
 
         <div className="sound-toggle">
           <button

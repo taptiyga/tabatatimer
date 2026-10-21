@@ -381,6 +381,98 @@ input:focus, textarea:focus, select:focus {
 }
 
 .finished h2 { margin-bottom: 16px; }
+/* ============ Резервные копии ============ */
+.backup-actions {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: 10px;
+  margin: 0 auto 16px;
+  padding: 10px 12px;
+  background: linear-gradient(180deg, #1e293b, #172033);
+  border: 1px solid #334155;
+  border-radius: 14px;
+  max-width: 420px;
+  flex-wrap: wrap;
+}
+
+.backup-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex: 1 1 160px;
+  min-width: 0;
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 1px solid #475569;
+  background: #334155;
+  color: #e2e8f0;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, transform 0.05s,
+    box-shadow 0.15s;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.backup-btn:hover {
+  background: #3e4d63;
+  border-color: #64748b;
+}
+
+.backup-btn:active {
+  transform: scale(0.97);
+}
+
+.backup-btn:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Экспорт — синий акцент */
+.backup-btn.export {
+  background: #1d4ed8;
+  border-color: #3b82f6;
+  color: #fff;
+}
+
+.backup-btn.export:hover {
+  background: #2563eb;
+  border-color: #60a5fa;
+}
+
+/* Импорт — зелёный акцент */
+.backup-btn.import {
+  background: #047857;
+  border-color: #10b981;
+  color: #fff;
+}
+
+.backup-btn.import:hover {
+  background: #059669;
+  border-color: #34d399;
+}
+
+.backup-btn .icon {
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+/* Мобильные */
+@media (max-width: 480px) {
+  .backup-actions {
+    padding: 8px;
+    gap: 8px;
+  }
+
+  .backup-btn {
+    flex: 1 1 100%;
+    padding: 10px 12px;
+    font-size: 0.85rem;
+  }
+}
 
 /* ---------- Мобильные ---------- */
 @media (max-width: 480px) {
