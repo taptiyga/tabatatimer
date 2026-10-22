@@ -109,70 +109,61 @@ input:focus, textarea:focus, select:focus {
   min-width: 0;
 }
 
-/* ---------- Форма: сетка ввода времени ---------- */
+/* ---------- Форма: сетка времени ---------- */
 .time-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 12px;
   margin-bottom: 10px;
 }
 
-.time-input {
+.time-field {
   display: flex;
   flex-direction: column;
   gap: 4px;
   min-width: 0;
 }
 
-.time-input-label {
+.time-field-label {
   font-size: 0.9rem;
   color: #94a3b8;
 }
 
-.time-input-fields {
+.time-field-value {
   display: flex;
   align-items: center;
-  gap: 4px;
-  background: #0f172a;
+  justify-content: center;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
   border: 1px solid #334155;
-  border-radius: 8px;
-  padding: 4px 8px;
-  min-width: 0;
-}
-
-.time-input-fields input {
-  width: 60px;
-  padding: 4px 6px;
-  border: none;
-  background: transparent;
-  text-align: center;
+  background: #0f172a;
   color: #e2e8f0;
-  font-size: 1rem;
-  min-width: 0;
-  max-width: 100%;
-}
-
-.time-input-fields input:focus {
-  outline: none;
-}
-
-.time-input-fields:focus-within {
-  border-color: #3b82f6;
-}
-
-.time-sep {
-  color: #64748b;
+  font-size: 1.05rem;
   font-weight: 600;
-  font-size: 1.1rem;
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+  transition: border-color 0.15s, background 0.15s, transform 0.05s;
 }
 
-.rounds-label {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  font-size: 0.9rem;
-  color: #94a3b8;
-  min-width: 0;
+.time-field-value:hover {
+  border-color: #3b82f6;
+  background: #172033;
+}
+
+.time-field-value:active {
+  transform: scale(0.98);
+}
+
+.time-field-rounds {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #334155;
+  background: #0f172a;
+  color: #e2e8f0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  text-align: center;
 }
 
 /* ---------- Кнопки ---------- */
@@ -253,7 +244,7 @@ input:focus, textarea:focus, select:focus {
 .muted { color: #94a3b8; }
 .small { font-size: 0.85rem; }
 
-/* ---------- Конструктор тренировок: устранение вылезания ---------- */
+/* ---------- Конструктор тренировок ---------- */
 .workout-add {
   display: flex;
   gap: 8px;
@@ -381,6 +372,7 @@ input:focus, textarea:focus, select:focus {
 }
 
 .finished h2 { margin-bottom: 16px; }
+
 /* ============ Резервные копии ============ */
 .backup-actions {
   display: flex;
@@ -431,7 +423,6 @@ input:focus, textarea:focus, select:focus {
   outline-offset: 2px;
 }
 
-/* Экспорт — синий акцент */
 .backup-btn.export {
   background: #1d4ed8;
   border-color: #3b82f6;
@@ -443,7 +434,6 @@ input:focus, textarea:focus, select:focus {
   border-color: #60a5fa;
 }
 
-/* Импорт — зелёный акцент */
 .backup-btn.import {
   background: #047857;
   border-color: #10b981;
@@ -460,7 +450,150 @@ input:focus, textarea:focus, select:focus {
   line-height: 1;
 }
 
-/* Мобильные */
+/* ============ Модалка: 4 цифры ============ */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 1000;
+  animation: fade-in 0.15s ease;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 16px;
+  padding: 20px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: pop-in 0.18s ease;
+}
+
+@keyframes pop-in {
+  from { transform: scale(0.94); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.modal-title {
+  margin: 0 0 16px;
+  font-size: 1.1rem;
+  text-align: center;
+  color: #e2e8f0;
+}
+
+.digit-picker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.digit-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.digit-row {
+  display: flex;
+  gap: 6px;
+}
+
+.digit-row.digit-values {
+  gap: 4px;
+}
+
+.digit-input {
+  width: 52px;
+  height: 64px;
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  border-radius: 10px;
+  border: 1px solid #334155;
+  background: #0f172a;
+  color: #f1f5f9;
+  font-variant-numeric: tabular-nums;
+  padding: 0;
+}
+
+.digit-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.digit-btn {
+  width: 52px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid #475569;
+  background: #334155;
+  color: #e2e8f0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.05s;
+  user-select: none;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.digit-btn:hover { background: #3e4d63; }
+.digit-btn:active { transform: scale(0.94); }
+
+.digit-unit {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 2px;
+}
+
+.digit-sep {
+  font-size: 2.4rem;
+  color: #64748b;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.modal-total {
+  text-align: center;
+  color: #94a3b8;
+  font-size: 0.95rem;
+  margin-bottom: 16px;
+}
+
+.modal-total strong {
+  color: #e2e8f0;
+  font-variant-numeric: tabular-nums;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.modal-actions .btn {
+  min-width: 100px;
+}
+
+/* ============ Мобильные ============ */
 @media (max-width: 480px) {
   .backup-actions {
     padding: 8px;
@@ -472,10 +605,7 @@ input:focus, textarea:focus, select:focus {
     padding: 10px 12px;
     font-size: 0.85rem;
   }
-}
 
-/* ---------- Мобильные ---------- */
-@media (max-width: 480px) {
   .workout-add {
     flex-wrap: wrap;
   }
@@ -485,10 +615,16 @@ input:focus, textarea:focus, select:focus {
   .workout-add .btn {
     flex-basis: 100%;
   }
-}
-@media (max-width: 480px) {
+
   .actions.center .btn {
     flex: 1 1 calc(50% - 4px);
     min-width: 0;
   }
+
+  .digit-input { width: 44px; height: 56px; font-size: 1.6rem; }
+  .digit-btn { width: 44px; height: 28px; font-size: 1rem; }
+  .digit-sep { font-size: 1.8rem; }
+  .digit-picker { gap: 8px; }
+  .modal { padding: 16px; }
+  .modal-actions .btn { min-width: 80px; }
 }

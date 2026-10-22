@@ -48,7 +48,7 @@ export default function App() {
   }, []);
 
   const addExercise = (data) => {
-    setExercises((prev) => [...prev, { ...data, id: uid() }]);
+    setExercises((prev) => [{ ...data, id: uid() }, ...prev]);
     setEditingExercise(null);
   };
 
@@ -75,7 +75,7 @@ export default function App() {
   };
 
   const addWorkout = (data) => {
-    setWorkouts((prev) => [...prev, { ...data, id: uid() }]);
+    setWorkouts((prev) => [{ ...data, id: uid() }, ...prev]);
     setEditingWorkout(null);
   };
 

@@ -1,5 +1,6 @@
 import { useState } from "react";
-import TimeInput from "./TimeInput";
+import TimeField from "./TimeField";
+import RoundsField from "./RoundsField";
 
 const empty = {
   name: "",
@@ -15,11 +16,7 @@ export default function ExerciseForm({ onSubmit, initial = null, onCancel }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    const numeric = ["rounds"].includes(name);
-    setForm((prev) => ({
-      ...prev,
-      [name]: numeric ? Number(value) : value,
-    }));
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const setTime = (field) => (seconds) => {
@@ -60,27 +57,19 @@ export default function ExerciseForm({ onSubmit, initial = null, onCancel }) {
       </label>
 
       <div className="time-grid">
-        <TimeInput
+        <TimeField
           label="Подготовка"
           value={form.prepare}
           onChange={setTime("prepare")}
         />
-        <TimeInput
+        <TimeField
           label="Упражнение"
           value={form.exercise}
           onChange={setTime("exercise")}
+          min={1}
         />
-        <TimeInput label="Отдых" value={form.rest} onChange={setTime("rest")} />
-        <label className="rounds-label">
-          Повторений
-          <input
-            type="number"
-            min="1"
-            name="rounds"
-            value={form.rounds}
-            onChange={handleChange}
-          />
-        </label>
+        <TimeField label="Отдых" value={form.rest} onChange={setTime("rest")} />
+        <RoundsField value={form.rounds} onChange={setTime("rounds")} />
       </div>
 
       <div className="actions">
