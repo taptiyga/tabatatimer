@@ -474,7 +474,7 @@ input:focus, textarea:focus, select:focus {
   border-radius: 16px;
   padding: 20px;
   width: 100%;
-  max-width: 400px;
+  max-width: 460px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
   animation: pop-in 0.18s ease;
 }
@@ -486,7 +486,7 @@ input:focus, textarea:focus, select:focus {
 
 .modal-title {
   margin: 0 0 16px;
-  font-size: 1.1rem;
+  font-size: 1.25rem;
   text-align: center;
   color: #e2e8f0;
 }
@@ -495,7 +495,7 @@ input:focus, textarea:focus, select:focus {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 16px;
   margin-bottom: 16px;
 }
 
@@ -503,23 +503,23 @@ input:focus, textarea:focus, select:focus {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
 }
 
 .digit-row {
   display: flex;
-  gap: 6px;
+  gap: 10px;
 }
 
 .digit-row.digit-values {
-  gap: 4px;
+  gap: 8px;
 }
 
 .digit-input {
-  width: 52px;
-  height: 64px;
+  width: 70px;
+  height: 84px;
   text-align: center;
-  font-size: 2rem;
+  font-size: 2.6rem;
   font-weight: 700;
   border-radius: 10px;
   border: 1px solid #334155;
@@ -536,13 +536,13 @@ input:focus, textarea:focus, select:focus {
 }
 
 .digit-btn {
-  width: 52px;
-  height: 32px;
-  border-radius: 8px;
+  width: 70px;
+  height: 52px;
+  border-radius: 12px;
   border: 1px solid #475569;
   background: #334155;
   color: #e2e8f0;
-  font-size: 1.1rem;
+  font-size: 1.8rem;
   font-weight: 700;
   cursor: pointer;
   transition: background 0.15s, transform 0.05s;
@@ -557,7 +557,7 @@ input:focus, textarea:focus, select:focus {
 .digit-btn:active { transform: scale(0.94); }
 
 .digit-unit {
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   color: #94a3b8;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -565,7 +565,7 @@ input:focus, textarea:focus, select:focus {
 }
 
 .digit-sep {
-  font-size: 2.4rem;
+  font-size: 3rem;
   color: #64748b;
   font-weight: 700;
   margin-bottom: 20px;
@@ -574,7 +574,7 @@ input:focus, textarea:focus, select:focus {
 .modal-total {
   text-align: center;
   color: #94a3b8;
-  font-size: 0.95rem;
+  font-size: 1.05rem;
   margin-bottom: 16px;
 }
 
@@ -586,11 +586,13 @@ input:focus, textarea:focus, select:focus {
 .modal-actions {
   display: flex;
   gap: 8px;
-  justify-content: flex-end;
+  justify-content: center;
 }
 
 .modal-actions .btn {
-  min-width: 100px;
+  min-width: 140px; 
+  padding: 12px 20px; 
+  font-size: 1rem;
 }
 
 /* ============ Мобильные ============ */
@@ -621,10 +623,10 @@ input:focus, textarea:focus, select:focus {
     min-width: 0;
   }
 
-  .digit-input { width: 44px; height: 56px; font-size: 1.6rem; }
-  .digit-btn { width: 44px; height: 28px; font-size: 1rem; }
-  .digit-sep { font-size: 1.8rem; }
-  .digit-picker { gap: 8px; }
-  .modal { padding: 16px; }
-  .modal-actions .btn { min-width: 80px; }
+  .digit-input { width: 58px; height: 72px; font-size: 2rem; }
+  .digit-btn { width: 58px; height: 44px; font-size: 1.5rem; }
+  .digit-sep { font-size: 2.2rem; margin-bottom: 20px; }
+  .digit-picker { gap: 10px; }
+  .modal { padding: 18px; max-width: 100%; }
+  .modal-actions .btn { min-width: 110px; padding: 10px 16px; }
 }
