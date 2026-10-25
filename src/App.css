@@ -14,16 +14,49 @@ body {
   padding: 20px;
 }
 
-.header h1 {
-  text-align: center;
+/* ---------- Шапка с кнопкой настроек ---------- */
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  position: relative;
   margin: 8px 0 12px;
+}
+
+.header-top h1 {
+  margin: 0;
   font-size: 1.6rem;
 }
 
-.sound-toggle {
+.settings-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid #334155;
+  background: #1e293b;
+  color: #cbd5e1;
+  font-size: 1.2rem;
+  cursor: pointer;
   display: flex;
+  align-items: center;
   justify-content: center;
-  margin-bottom: 12px;
+  transition: background 0.15s, border-color 0.15s, transform 0.05s;
+}
+
+.settings-btn:hover {
+  background: #334155;
+  border-color: #3b82f6;
+  color: #fff;
+}
+
+.settings-btn:active {
+  transform: scale(0.94);
+}
+
+.settings-btn:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
 }
 
 .tabs {
@@ -107,6 +140,28 @@ input:focus, textarea:focus, select:focus {
   max-width: 100%;
   display: block;
   min-width: 0;
+}
+
+/* ---------- Заголовок списка с кнопкой «Создать» ---------- */
+.list-block {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+}
+
+.list-title {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #e2e8f0;
 }
 
 /* ---------- Форма: сетка времени ---------- */
@@ -193,6 +248,11 @@ input:focus, textarea:focus, select:focus {
 .btn:hover { opacity: 0.85; }
 .btn:active { transform: scale(0.97); }
 
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 .btn.primary {
   background: #3b82f6;
   border-color: #3b82f6;
@@ -219,7 +279,7 @@ input:focus, textarea:focus, select:focus {
 
 .card-head {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 8px;
   min-width: 0;
@@ -243,6 +303,52 @@ input:focus, textarea:focus, select:focus {
 
 .muted { color: #94a3b8; }
 .small { font-size: 0.85rem; }
+
+/* ---------- Раскрывающаяся карточка упражнения ---------- */
+.exercise-card.clickable {
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.exercise-card.clickable:hover {
+  border-color: #475569;
+}
+
+.exercise-card.clickable:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.expand-chevron {
+  display: inline-block;
+  color: #94a3b8;
+  font-size: 1rem;
+  line-height: 1;
+  transition: transform 0.2s;
+  flex: 0 0 auto;
+}
+
+.expand-chevron.open {
+  transform: rotate(180deg);
+}
+
+/* Описание по умолчанию — обрезано в одну строку */
+.exercise-desc {
+  margin: 4px 0 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+  min-width: 0;
+}
+
+/* Раскрытое — многострочное */
+.exercise-desc.open {
+  white-space: pre-wrap;
+  overflow: visible;
+  word-break: break-word;
+}
 
 /* ---------- Конструктор тренировок ---------- */
 .workout-add {
@@ -307,6 +413,7 @@ input:focus, textarea:focus, select:focus {
   text-align: center;
   padding: 24px;
   position: relative;
+  min-height: 520px;
 }
 
 .timer-meta {
@@ -373,84 +480,59 @@ input:focus, textarea:focus, select:focus {
 
 .finished h2 { margin-bottom: 16px; }
 
-/* ============ Резервные копии ============ */
-.backup-actions {
-  display: flex;
-  justify-content: center;
-  align-items: stretch;
-  gap: 10px;
-  margin: 0 auto 16px;
-  padding: 10px 12px;
-  background: linear-gradient(180deg, #1e293b, #172033);
-  border: 1px solid #334155;
-  border-radius: 14px;
-  max-width: 420px;
-  flex-wrap: wrap;
-}
-
-.backup-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  flex: 1 1 160px;
-  min-width: 0;
-  padding: 10px 16px;
-  border-radius: 10px;
-  border: 1px solid #475569;
-  background: #334155;
-  color: #e2e8f0;
-  font-size: 0.9rem;
-  font-weight: 500;
+/* Таймер: кликабельная карточка */
+.timer-clickable {
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s, transform 0.05s,
-    box-shadow 0.15s;
-  white-space: nowrap;
   user-select: none;
+  transition: background 0.15s, border-color 0.15s;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.backup-btn:hover {
-  background: #3e4d63;
-  border-color: #64748b;
+.timer-clickable:hover {
+  border-color: #475569;
 }
 
-.backup-btn:active {
-  transform: scale(0.97);
-}
-
-.backup-btn:focus-visible {
+.timer-clickable:focus-visible {
   outline: 2px solid #3b82f6;
-  outline-offset: 2px;
+  outline-offset: 4px;
 }
 
-.backup-btn.export {
-  background: #1d4ed8;
-  border-color: #3b82f6;
-  color: #fff;
+/* Оверлей «Пауза» поверх кружка */
+.paused-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(15, 23, 42, 0.85);
+  color: #f1f5f9;
+  padding: 10px 22px;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  pointer-events: none;
+  border: 1px solid #334155;
+  backdrop-filter: blur(4px);
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.15s, visibility 0.15s;
 }
 
-.backup-btn.export:hover {
-  background: #2563eb;
-  border-color: #60a5fa;
+.paused-overlay.hidden {
+  opacity: 0;
+  visibility: hidden;
 }
 
-.backup-btn.import {
-  background: #047857;
-  border-color: #10b981;
-  color: #fff;
+/* Подсказка внизу */
+.tap-hint {
+  margin: 8px 0 4px;
+  font-size: 0.8rem;
+  color: #64748b;
+  text-align: center;
+  min-height: 1.2em;
 }
 
-.backup-btn.import:hover {
-  background: #059669;
-  border-color: #34d399;
-}
-
-.backup-btn .icon {
-  font-size: 1.05rem;
-  line-height: 1;
-}
-
-/* ============ Модалка: 4 цифры ============ */
+/* ============ Модалка (общая) ============ */
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -477,6 +559,8 @@ input:focus, textarea:focus, select:focus {
   max-width: 460px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
   animation: pop-in 0.18s ease;
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
 }
 
 @keyframes pop-in {
@@ -491,6 +575,131 @@ input:focus, textarea:focus, select:focus {
   color: #e2e8f0;
 }
 
+.modal-total {
+  text-align: center;
+  color: #94a3b8;
+  font-size: 1.05rem;
+  margin-bottom: 16px;
+}
+
+.modal-total strong {
+  color: #e2e8f0;
+  font-variant-numeric: tabular-nums;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+.modal-actions .btn {
+  min-width: 140px;
+  padding: 12px 20px;
+  font-size: 1rem;
+}
+
+/* ---------- Модалка формы ---------- */
+.modal-wide {
+  max-width: 520px;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.modal-header .modal-title {
+  margin: 0;
+  text-align: left;
+}
+
+.modal-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid #475569;
+  background: #334155;
+  color: #e2e8f0;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  transition: background 0.15s, transform 0.05s;
+}
+
+.modal-close:hover { background: #3e4d63; }
+.modal-close:active { transform: scale(0.94); }
+
+.form-in-modal {
+  background: transparent;
+  border: none;
+  padding: 0;
+  border-radius: 0;
+}
+
+.form-in-modal h3 { display: none; }
+
+.form-in-modal .modal-actions {
+  margin-top: 20px;
+}
+
+/* ============ Модалка настроек ============ */
+.settings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 10px;
+}
+
+.settings-label {
+  font-size: 0.95rem;
+  color: #cbd5e1;
+  min-width: 0;
+}
+
+.settings-row .btn,
+.settings-row label.btn {
+  flex: 0 0 auto;
+  min-width: 100px;
+  text-align: center;
+}
+
+.settings-row label.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.settings-error {
+  margin: 0;
+  padding: 8px 10px;
+  background: #7f1d1d;
+  color: #fecaca;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+/* ============ Пикер цифр ============ */
 .digit-picker {
   display: flex;
   align-items: center;
@@ -571,41 +780,35 @@ input:focus, textarea:focus, select:focus {
   margin-bottom: 20px;
 }
 
-.modal-total {
-  text-align: center;
-  color: #94a3b8;
-  font-size: 1.05rem;
-  margin-bottom: 16px;
-}
-
-.modal-total strong {
-  color: #e2e8f0;
-  font-variant-numeric: tabular-nums;
-}
-
-.modal-actions {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-}
-
-.modal-actions .btn {
-  min-width: 140px; 
-  padding: 12px 20px; 
-  font-size: 1rem;
-}
-
 /* ============ Мобильные ============ */
 @media (max-width: 480px) {
-  .backup-actions {
-    padding: 8px;
-    gap: 8px;
+  .header-top h1 {
+    font-size: 1.35rem;
   }
 
-  .backup-btn {
-    flex: 1 1 100%;
-    padding: 10px 12px;
+  .settings-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 1.05rem;
+  }
+
+  .settings-row {
+    padding: 8px 10px;
+  }
+
+  .settings-row .btn,
+  .settings-row label.btn {
+    min-width: 84px;
+    padding: 8px 10px;
     font-size: 0.85rem;
+  }
+
+  .list-header {
+    flex-wrap: wrap;
+  }
+
+  .list-header .btn {
+    flex: 1 1 100%;
   }
 
   .workout-add {
@@ -629,4 +832,6 @@ input:focus, textarea:focus, select:focus {
   .digit-picker { gap: 10px; }
   .modal { padding: 18px; max-width: 100%; }
   .modal-actions .btn { min-width: 110px; padding: 10px 16px; }
+
+  .timer-card { min-height: 460px; }
 }

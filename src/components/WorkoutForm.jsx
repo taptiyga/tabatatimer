@@ -1,4 +1,5 @@
 import { useState } from "react";
+import FormModal from "./FormModal";
 
 export default function WorkoutForm({
   exercises,
@@ -35,98 +36,100 @@ export default function WorkoutForm({
     e.preventDefault();
     if (!name.trim() || !items.length) return;
     onSubmit({ name, items });
-    if (!initial) {
-      setName("");
-      setItems([]);
-    }
   };
 
   const selectedName = exercises.find((ex) => ex.id === selectedId)?.name || "";
 
   return (
-    <form className="form" onSubmit={handleSubmit}>
-      <h3>{initial ? "Редактировать тренировку" : "Новая тренировка"}</h3>
+    <FormModal
+      title={initial ? "Редактировать тренировку" : "Новая тренировка"}
+      onClose={onCancel}
+    >
+      <form className="form form-in-modal" onSubmit={handleSubmit}>
+        <label>
+          Название *
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Например: Утренняя"
+            required
+            autoFocus
+          />
+        </label>
 
-      <label>
-        Название *
-        <input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Например: Утренняя"
-          required
-        />
-      </label>
+        <div className="workout-add">
+          <select
+            value={selectedId}
+            onChange={(e) => setSelectedId(e.target.value)}
+            title={selectedName}
+          >
+            {exercises.map((ex) => (
+              <option key={ex.id} value={ex.id}>
+                {ex.name} ({ex.rounds}×{ex.exercise}с)
+              </option>
+            ))}
+          </select>
+          <button
+            type="button"
+            className="btn"
+            onClick={addExercise}
+            disabled={!exercises.length}
+          >
+            + Добавить
+          </button>
+        </div>
 
-      <div className="workout-add">
-        <select
-          value={selectedId}
-          onChange={(e) => setSelectedId(e.target.value)}
-          title={selectedName}
-        >
-          {exercises.map((ex) => (
-            <option key={ex.id} value={ex.id}>
-              {ex.name} ({ex.rounds}×{ex.exercise}с)
-            </option>
-          ))}
-        </select>
-        <button
-          type="button"
-          className="btn"
-          onClick={addExercise}
-          disabled={!exercises.length}
-        >
-          + Добавить
-        </button>
-      </div>
+        {items.length > 0 && (
+          <ol className="workout-items">
+            {items.map((item, i) => {
+              const ex = exercises.find((e) => e.id === item.exerciseId);
+              return (
+                <li key={i}>
+                  <span className="truncate" title={ex ? ex.name : "Удалено"}>
+                    {ex ? ex.name : "Удалено"}
+                  </span>
+                  <div className="actions">
+                    <button
+                      type="button"
+                      className="btn small"
+                      onClick={() => move(i, -1)}
+                    >
+                      ↑
+                    </button>
+                    <button
+                      type="button"
+                      className="btn small"
+                      onClick={() => move(i, 1)}
+                    >
+                      ↓
+                    </button>
+                    <button
+                      type="button"
+                      className="btn small danger"
+                      onClick={() => removeItem(i)}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </li>
+              );
+            })}
+          </ol>
+        )}
 
-      {items.length > 0 && (
-        <ol className="workout-items">
-          {items.map((item, i) => {
-            const ex = exercises.find((e) => e.id === item.exerciseId);
-            return (
-              <li key={i}>
-                <span className="truncate" title={ex ? ex.name : "Удалено"}>
-                  {ex ? ex.name : "Удалено"}
-                </span>
-                <div className="actions">
-                  <button
-                    type="button"
-                    className="btn small"
-                    onClick={() => move(i, -1)}
-                  >
-                    ↑
-                  </button>
-                  <button
-                    type="button"
-                    className="btn small"
-                    onClick={() => move(i, 1)}
-                  >
-                    ↓
-                  </button>
-                  <button
-                    type="button"
-                    className="btn small danger"
-                    onClick={() => removeItem(i)}
-                  >
-                    ✕
-                  </button>
-                </div>
-              </li>
-            );
-          })}
-        </ol>
-      )}
-
-      <div className="actions">
-        <button type="submit" className="btn primary">
-          {initial ? "Сохранить" : "Создать тренировку"}
-        </button>
-        {onCancel && (
+        <div className="modal-actions">
           <button type="button" className="btn" onClick={onCancel}>
             Отмена
           </button>
-        )}
-      </div>
-    </form>
+          <button
+            type="submit"
+            className="btn primary"
+            disabled={!items.length}
+          >
+            {initial ? "Сохранить" : "Создать"}
+          </button>
+        </div>
+      </form>
+    </FormModal>
   );
 }

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import TimeField from "./TimeField";
 import RoundsField from "./RoundsField";
+import FormModal from "./FormModal";
 
 const empty = {
   name: "",
@@ -27,61 +28,66 @@ export default function ExerciseForm({ onSubmit, initial = null, onCancel }) {
     e.preventDefault();
     if (!form.name.trim()) return;
     onSubmit(form);
-    if (!initial) setForm({ ...empty });
   };
 
   return (
-    <form className="form" onSubmit={handleSubmit}>
-      <h3>{initial ? "Редактировать упражнение" : "Новое упражнение"}</h3>
+    <FormModal
+      title={initial ? "Редактировать упражнение" : "Новое упражнение"}
+      onClose={onCancel}
+    >
+      <form className="form form-in-modal" onSubmit={handleSubmit}>
+        <label>
+          Название *
+          <input
+            name="name"
+            value={form.name}
+            onChange={handleChange}
+            placeholder="Например: Берпи"
+            required
+            autoFocus
+          />
+        </label>
 
-      <label>
-        Название *
-        <input
-          name="name"
-          value={form.name}
-          onChange={handleChange}
-          placeholder="Например: Берпи"
-          required
-        />
-      </label>
+        <label>
+          Описание (необязательно)
+          <textarea
+            name="description"
+            value={form.description}
+            onChange={handleChange}
+            placeholder="Техника выполнения..."
+            rows={2}
+          />
+        </label>
 
-      <label>
-        Описание (необязательно)
-        <textarea
-          name="description"
-          value={form.description}
-          onChange={handleChange}
-          placeholder="Техника выполнения..."
-          rows={2}
-        />
-      </label>
+        <div className="time-grid">
+          <TimeField
+            label="Подготовка"
+            value={form.prepare}
+            onChange={setTime("prepare")}
+          />
+          <TimeField
+            label="Упражнение"
+            value={form.exercise}
+            onChange={setTime("exercise")}
+            min={1}
+          />
+          <TimeField
+            label="Отдых"
+            value={form.rest}
+            onChange={setTime("rest")}
+          />
+          <RoundsField value={form.rounds} onChange={setTime("rounds")} />
+        </div>
 
-      <div className="time-grid">
-        <TimeField
-          label="Подготовка"
-          value={form.prepare}
-          onChange={setTime("prepare")}
-        />
-        <TimeField
-          label="Упражнение"
-          value={form.exercise}
-          onChange={setTime("exercise")}
-          min={1}
-        />
-        <TimeField label="Отдых" value={form.rest} onChange={setTime("rest")} />
-        <RoundsField value={form.rounds} onChange={setTime("rounds")} />
-      </div>
-
-      <div className="actions">
-        <button type="submit" className="btn primary">
-          {initial ? "Сохранить" : "Добавить"}
-        </button>
-        {onCancel && (
+        <div className="modal-actions">
           <button type="button" className="btn" onClick={onCancel}>
             Отмена
           </button>
-        )}
-      </div>
-    </form>
+          <button type="submit" className="btn primary">
+            {initial ? "Сохранить" : "Добавить"}
+          </button>
+        </div>
+      </form>
+    </FormModal>
   );
 }

@@ -22,7 +22,6 @@ export default function Timer({
     start,
     pause,
     resume,
-    stop,
     skip,
     prevStep,
     totalSteps,
@@ -39,9 +38,11 @@ export default function Timer({
     }
   }, [startSteps, start, clearStartSteps]);
 
-  const handleResume = () => {
+  const togglePause = () => {
+    if (isFinished) return;
     unlockAudio();
-    resume();
+    if (isRunning) pause();
+    else resume();
   };
 
   const progress = currentStep
@@ -56,8 +57,8 @@ export default function Timer({
     return (
       <div className="timer-card finished">
         <h2>🎉 Готово!</h2>
-        <button className="btn primary" onClick={stop}>
-          Закрыть
+        <button className="btn primary" onClick={prevStep}>
+          ⏮ Начать сначала
         </button>
       </div>
     );
@@ -72,7 +73,19 @@ export default function Timer({
   }
 
   return (
-    <div className="timer-card">
+    <div
+      className="timer-card timer-clickable"
+      onClick={togglePause}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === " " || e.key === "Enter") {
+          e.preventDefault();
+          togglePause();
+        }
+      }}
+      aria-label={isRunning ? "Поставить на паузу" : "Продолжить"}
+    >
       <div className="timer-meta">
         <span>
           Шаг {currentIndex + 1} / {totalSteps}
@@ -106,30 +119,26 @@ export default function Timer({
           />
         </svg>
         <div className="circle-time">{fmtClock(timeLeft)}</div>
+
+        {!isRunning && <div className="paused-overlay">⏸ Пауза</div>}
       </div>
 
-      <div className="actions center">
+      <p className="tap-hint">
+        {isRunning
+          ? "Нажмите, чтобы поставить на паузу"
+          : "Нажмите, чтобы продолжить"}
+      </p>
+
+      <div className="actions center" onClick={(e) => e.stopPropagation()}>
         <button
           className="btn"
           onClick={prevStep}
-          title="Назад к предыдущему шагу (на первом шаге — сначала)"
+          title="Назад к предыдущему шагу"
         >
           ⏮ Назад
         </button>
-        {isRunning ? (
-          <button className="btn" onClick={pause}>
-            ⏸ Пауза
-          </button>
-        ) : (
-          <button className="btn primary" onClick={handleResume}>
-            ▶ Продолжить
-          </button>
-        )}
         <button className="btn" onClick={skip}>
           ⏭ Пропустить
-        </button>
-        <button className="btn danger" onClick={stop}>
-          ⏹ Стоп
         </button>
       </div>
     </div>

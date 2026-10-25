@@ -4,6 +4,7 @@ import ExerciseList from "./components/ExerciseList";
 import WorkoutForm from "./components/WorkoutForm";
 import WorkoutList from "./components/WorkoutList";
 import Timer from "./components/Timer";
+import SettingsModal from "./components/SettingsModal";
 import {
   buildStepsForExercise,
   buildStepsForWorkout,
@@ -25,39 +26,37 @@ export default function App() {
   const [tab, setTab] = useState("timer");
   const [exercises, setExercises] = useState(() => loadExercises());
   const [workouts, setWorkouts] = useState(() => loadWorkouts());
-  const [editingExercise, setEditingExercise] = useState(null);
+  const [editingExercise, setEditingExercise] = useState(null); // null | 'new' | object
   const [editingWorkout, setEditingWorkout] = useState(null);
   const [pendingSteps, setPendingSteps] = useState(null);
   const [soundEnabled, setSoundEnabled] = useState(loadSound);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   useEffect(() => saveExercises(exercises), [exercises]);
   useEffect(() => saveWorkouts(workouts), [workouts]);
   useEffect(() => saveSound(soundEnabled), [soundEnabled]);
 
-  // Запрос постоянного хранилища (защита от автоматической очистки)
   useEffect(() => {
     if (navigator.storage && navigator.storage.persist) {
-      navigator.storage.persist().then((persistent) => {
-        console.log(
-          persistent
-            ? "Хранилище защищено от автоматической очистки."
-            : "Постоянное хранилище не предоставлено. Данные могут быть очищены при нехватке места.",
-        );
-      });
+      navigator.storage.persist();
     }
   }, []);
 
-  const addExercise = (data) => {
-    setExercises((prev) => [{ ...data, id: uid() }, ...prev]);
-    setEditingExercise(null);
-  };
+  // ---------- Упражнения ----------
+  const openCreateExercise = () => setEditingExercise("new");
+  const openEditExercise = (ex) => setEditingExercise(ex);
+  const closeExerciseModal = () => setEditingExercise(null);
 
-  const updateExercise = (data) => {
-    setExercises((prev) =>
-      prev.map((e) =>
-        e.id === editingExercise.id ? { ...data, id: e.id } : e,
-      ),
-    );
+  const submitExercise = (data) => {
+    if (editingExercise === "new") {
+      setExercises((prev) => [{ ...data, id: uid() }, ...prev]);
+    } else if (editingExercise && editingExercise.id) {
+      setExercises((prev) =>
+        prev.map((e) =>
+          e.id === editingExercise.id ? { ...data, id: e.id } : e,
+        ),
+      );
+    }
     setEditingExercise(null);
   };
 
@@ -74,15 +73,21 @@ export default function App() {
     );
   };
 
-  const addWorkout = (data) => {
-    setWorkouts((prev) => [{ ...data, id: uid() }, ...prev]);
-    setEditingWorkout(null);
-  };
+  // ---------- Тренировки ----------
+  const openCreateWorkout = () => setEditingWorkout("new");
+  const openEditWorkout = (w) => setEditingWorkout(w);
+  const closeWorkoutModal = () => setEditingWorkout(null);
 
-  const updateWorkout = (data) => {
-    setWorkouts((prev) =>
-      prev.map((w) => (w.id === editingWorkout.id ? { ...data, id: w.id } : w)),
-    );
+  const submitWorkout = (data) => {
+    if (editingWorkout === "new") {
+      setWorkouts((prev) => [{ ...data, id: uid() }, ...prev]);
+    } else if (editingWorkout && editingWorkout.id) {
+      setWorkouts((prev) =>
+        prev.map((w) =>
+          w.id === editingWorkout.id ? { ...data, id: w.id } : w,
+        ),
+      );
+    }
     setEditingWorkout(null);
   };
 
@@ -91,6 +96,7 @@ export default function App() {
     setWorkouts((prev) => prev.filter((w) => w.id !== id));
   };
 
+  // ---------- Таймер ----------
   const startExercise = (ex) => {
     setPendingSteps(buildStepsForExercise(ex));
     setTab("timer");
@@ -101,7 +107,7 @@ export default function App() {
     setTab("timer");
   };
 
-  // Экспорт всех данных в JSON-файл
+  // ---------- Бэкап ----------
   const exportData = () => {
     const data = {
       exercises,
@@ -120,64 +126,26 @@ export default function App() {
     URL.revokeObjectURL(url);
   };
 
-  // Импорт данных из файла
-  const importData = (event) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    event.target.value = ""; // сброс сразу, чтобы можно было выбрать тот же файл повторно
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const data = JSON.parse(e.target.result);
-        if (!data.exercises || !data.workouts) {
-          alert("Неверный формат файла");
-          return;
-        }
-        if (window.confirm("Импорт заменит все текущие данные. Продолжить?")) {
-          setExercises(data.exercises);
-          setWorkouts(data.workouts);
-          if (typeof data.soundEnabled === "boolean") {
-            setSoundEnabled(data.soundEnabled);
-          }
-          alert("Данные успешно импортированы");
-        }
-      } catch {
-        alert("Не удалось прочитать файл");
-      }
-    };
-    reader.readAsText(file);
+  const importData = (data) => {
+    setExercises(data.exercises);
+    setWorkouts(data.workouts);
+    if (typeof data.soundEnabled === "boolean") {
+      setSoundEnabled(data.soundEnabled);
+    }
   };
 
   return (
     <div className="app">
       <header className="header">
-        <h1>🏋️ Tabata Timer</h1>
-
-        <div className="backup-actions">
-          <button className="backup-btn export" onClick={exportData}>
-            <span className="icon">📥</span>
-            Экспорт
-          </button>
-          <label className="backup-btn import">
-            <span className="icon">📤</span>
-            Импорт
-            <input
-              type="file"
-              accept=".json"
-              onChange={importData}
-              style={{ display: "none" }}
-            />
-          </label>
-        </div>
-
-        <div className="sound-toggle">
+        <div className="header-top">
+          <h1>🏋️ Tabata Timer</h1>
           <button
-            className={`btn small ${soundEnabled ? "primary" : ""}`}
-            onClick={() => setSoundEnabled((v) => !v)}
-            title={soundEnabled ? "Выключить звук" : "Включить звук"}
+            className="settings-btn"
+            onClick={() => setSettingsOpen(true)}
+            title="Настройки"
+            aria-label="Настройки"
           >
-            {soundEnabled ? "🔊 Звук вкл" : "🔇 Звук выкл"}
+            ⚙
           </button>
         </div>
 
@@ -213,48 +181,55 @@ export default function App() {
         )}
 
         {tab === "exercises" && (
-          <div className="panel">
-            <ExerciseForm
-              key={editingExercise?.id || "new"}
-              initial={editingExercise}
-              onSubmit={editingExercise ? updateExercise : addExercise}
-              onCancel={editingExercise ? () => setEditingExercise(null) : null}
-            />
-            <ExerciseList
-              exercises={exercises}
-              onEdit={setEditingExercise}
-              onDelete={deleteExercise}
-              onStart={startExercise}
-            />
-          </div>
+          <ExerciseList
+            exercises={exercises}
+            onCreate={openCreateExercise}
+            onEdit={openEditExercise}
+            onDelete={deleteExercise}
+            onStart={startExercise}
+          />
         )}
 
         {tab === "workouts" && (
-          <div className="panel">
-            {exercises.length === 0 ? (
-              <p className="muted">
-                Сначала создайте хотя бы одно упражнение во вкладке
-                «Упражнения».
-              </p>
-            ) : (
-              <WorkoutForm
-                key={editingWorkout?.id || "new"}
-                exercises={exercises}
-                initial={editingWorkout}
-                onSubmit={editingWorkout ? updateWorkout : addWorkout}
-                onCancel={editingWorkout ? () => setEditingWorkout(null) : null}
-              />
-            )}
-            <WorkoutList
-              workouts={workouts}
-              exercises={exercises}
-              onEdit={setEditingWorkout}
-              onDelete={deleteWorkout}
-              onStart={startWorkout}
-            />
-          </div>
+          <WorkoutList
+            workouts={workouts}
+            exercises={exercises}
+            onCreate={openCreateWorkout}
+            onEdit={openEditWorkout}
+            onDelete={deleteWorkout}
+            onStart={startWorkout}
+          />
         )}
       </main>
+
+      {editingExercise !== null && (
+        <ExerciseForm
+          key={editingExercise === "new" ? "new" : editingExercise.id}
+          initial={editingExercise === "new" ? null : editingExercise}
+          onSubmit={submitExercise}
+          onCancel={closeExerciseModal}
+        />
+      )}
+
+      {editingWorkout !== null && (
+        <WorkoutForm
+          key={editingWorkout === "new" ? "new" : editingWorkout.id}
+          exercises={exercises}
+          initial={editingWorkout === "new" ? null : editingWorkout}
+          onSubmit={submitWorkout}
+          onCancel={closeWorkoutModal}
+        />
+      )}
+
+      {settingsOpen && (
+        <SettingsModal
+          soundEnabled={soundEnabled}
+          onToggleSound={() => setSoundEnabled((v) => !v)}
+          onExport={exportData}
+          onImport={importData}
+          onClose={() => setSettingsOpen(false)}
+        />
+      )}
     </div>
   );
 }
