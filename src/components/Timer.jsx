@@ -7,10 +7,29 @@ const LABELS = { prepare: "Подготовка", exercise: "Упражнени�
 const COLORS = { prepare: "#f59e0b", exercise: "#ef4444", rest: "#10b981" };
 const CIRCUMFERENCE = 2 * Math.PI * 54;
 
+function TopBar({ onClose }) {
+  return (
+    <div className="timer-top" onClick={(e) => e.stopPropagation()}>
+      <button
+        className="timer-close"
+        onClick={(e) => {
+          e.stopPropagation();
+          onClose?.();
+        }}
+        aria-label="Закрыть таймер"
+        title="Закрыть"
+      >
+        ✕
+      </button>
+    </div>
+  );
+}
+
 export default function Timer({
   startSteps,
   clearStartSteps,
   soundEnabled = true,
+  onClose,
 }) {
   const timer = useTimer({ soundEnabled });
   const {
@@ -56,6 +75,7 @@ export default function Timer({
   if (isFinished) {
     return (
       <div className="timer-card finished">
+        <TopBar onClose={onClose} />
         <h2>🎉 Готово!</h2>
         <button className="btn primary" onClick={prevStep}>
           ⏮ Начать сначала
@@ -67,7 +87,8 @@ export default function Timer({
   if (!currentStep) {
     return (
       <div className="timer-card">
-        <p className="muted">Выберите упражнение или тренировку для старта</p>
+        <TopBar onClose={onClose} />
+        <p className="muted">Загрузка…</p>
       </div>
     );
   }
@@ -86,6 +107,8 @@ export default function Timer({
       }}
       aria-label={isRunning ? "Поставить на паузу" : "Продолжить"}
     >
+      <TopBar onClose={onClose} />
+
       <div className="timer-meta">
         <span>
           Шаг {currentIndex + 1} / {totalSteps}
@@ -120,7 +143,9 @@ export default function Timer({
         </svg>
         <div className="circle-time">{fmtClock(timeLeft)}</div>
 
-        {!isRunning && <div className="paused-overlay">⏸ Пауза</div>}
+        <div className={`paused-overlay ${!isRunning ? "" : "hidden"}`}>
+          ⏸ Пауза
+        </div>
       </div>
 
       <p className="tap-hint">

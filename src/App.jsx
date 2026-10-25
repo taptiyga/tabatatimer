@@ -23,14 +23,17 @@ const uid = () =>
   Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 
 export default function App() {
-  const [tab, setTab] = useState("timer");
+  const [tab, setTab] = useState("exercises"); // стартовая вкладка — упражнения
   const [exercises, setExercises] = useState(() => loadExercises());
   const [workouts, setWorkouts] = useState(() => loadWorkouts());
-  const [editingExercise, setEditingExercise] = useState(null); // null | 'new' | object
+  const [editingExercise, setEditingExercise] = useState(null);
   const [editingWorkout, setEditingWorkout] = useState(null);
   const [pendingSteps, setPendingSteps] = useState(null);
   const [soundEnabled, setSoundEnabled] = useState(loadSound);
   const [settingsOpen, setSettingsOpen] = useState(false);
+
+  // true, когда таймер запущен (есть шаги и он не закрыт)
+  const [timerActive, setTimerActive] = useState(false);
 
   useEffect(() => saveExercises(exercises), [exercises]);
   useEffect(() => saveWorkouts(workouts), [workouts]);
@@ -99,12 +102,20 @@ export default function App() {
   // ---------- Таймер ----------
   const startExercise = (ex) => {
     setPendingSteps(buildStepsForExercise(ex));
+    setTimerActive(true);
     setTab("timer");
   };
 
   const startWorkout = (w) => {
     setPendingSteps(buildStepsForWorkout(w, exercises));
+    setTimerActive(true);
     setTab("timer");
+  };
+
+  const closeTimer = () => {
+    setPendingSteps(null);
+    setTimerActive(false);
+    setTab("exercises");
   };
 
   // ---------- Бэкап ----------
@@ -149,38 +160,37 @@ export default function App() {
           </button>
         </div>
 
-        <nav className="tabs">
-          <button
-            className={tab === "timer" ? "active" : ""}
-            onClick={() => setTab("timer")}
-          >
-            Таймер
-          </button>
-          <button
-            className={tab === "exercises" ? "active" : ""}
-            onClick={() => setTab("exercises")}
-          >
-            Упражнения
-          </button>
-          <button
-            className={tab === "workouts" ? "active" : ""}
-            onClick={() => setTab("workouts")}
-          >
-            Тренировки
-          </button>
-        </nav>
+        {/* Вкладки видны только когда таймер НЕ запущен */}
+        {!timerActive && (
+          <nav className="tabs">
+            <button
+              className={tab === "exercises" ? "active" : ""}
+              onClick={() => setTab("exercises")}
+            >
+              Упражнения
+            </button>
+            <button
+              className={tab === "workouts" ? "active" : ""}
+              onClick={() => setTab("workouts")}
+            >
+              Тренировки
+            </button>
+          </nav>
+        )}
       </header>
 
       <main>
-        {tab === "timer" && (
+        {/* Таймер виден только когда запущен */}
+        {timerActive && (
           <Timer
             startSteps={pendingSteps}
             clearStartSteps={() => setPendingSteps(null)}
             soundEnabled={soundEnabled}
+            onClose={closeTimer}
           />
         )}
 
-        {tab === "exercises" && (
+        {!timerActive && tab === "exercises" && (
           <ExerciseList
             exercises={exercises}
             onCreate={openCreateExercise}
@@ -190,7 +200,7 @@ export default function App() {
           />
         )}
 
-        {tab === "workouts" && (
+        {!timerActive && tab === "workouts" && (
           <WorkoutList
             workouts={workouts}
             exercises={exercises}

@@ -333,7 +333,6 @@ input:focus, textarea:focus, select:focus {
   transform: rotate(180deg);
 }
 
-/* Описание по умолчанию — обрезано в одну строку */
 .exercise-desc {
   margin: 4px 0 8px;
   overflow: hidden;
@@ -343,7 +342,6 @@ input:focus, textarea:focus, select:focus {
   min-width: 0;
 }
 
-/* Раскрытое — многострочное */
 .exercise-desc.open {
   white-space: pre-wrap;
   overflow: visible;
@@ -411,9 +409,49 @@ input:focus, textarea:focus, select:focus {
 /* ---------- Таймер ---------- */
 .timer-card {
   text-align: center;
-  padding: 24px;
+  padding: 16px 24px 24px;
   position: relative;
   min-height: 520px;
+}
+
+/* Строка сверху с крестиком */
+.timer-top {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  min-height: 36px;
+  margin-bottom: 4px;
+}
+
+.timer-close {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid #475569;
+  background: #334155;
+  color: #e2e8f0;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, transform 0.05s, border-color 0.15s;
+  flex: 0 0 auto;
+}
+
+.timer-close:hover {
+  background: #7f1d1d;
+  border-color: #991b1b;
+  color: #fff;
+}
+
+.timer-close:active {
+  transform: scale(0.94);
+}
+
+.timer-close:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
 }
 
 .timer-meta {
@@ -480,7 +518,6 @@ input:focus, textarea:focus, select:focus {
 
 .finished h2 { margin-bottom: 16px; }
 
-/* Таймер: кликабельная карточка */
 .timer-clickable {
   cursor: pointer;
   user-select: none;
@@ -497,7 +534,6 @@ input:focus, textarea:focus, select:focus {
   outline-offset: 4px;
 }
 
-/* Оверлей «Пауза» поверх кружка */
 .paused-overlay {
   position: absolute;
   top: 50%;
@@ -523,7 +559,6 @@ input:focus, textarea:focus, select:focus {
   visibility: hidden;
 }
 
-/* Подсказка внизу */
 .tap-hint {
   margin: 8px 0 4px;
   font-size: 0.8rem;
@@ -834,4 +869,6 @@ input:focus, textarea:focus, select:focus {
   .modal-actions .btn { min-width: 110px; padding: 10px 16px; }
 
   .timer-card { min-height: 460px; }
+  .timer-close { width: 32px; height: 32px; }
+  .timer-top { min-height: 32px; }
 }
