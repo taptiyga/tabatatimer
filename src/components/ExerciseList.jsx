@@ -22,7 +22,6 @@ export default function ExerciseList({
   return (
     <div className="list-block">
       <div className="list-header">
-        <h3 className="list-title">Упражнения</h3>
         <button className="btn primary" onClick={onCreate}>
           + Создать
         </button>
@@ -58,11 +57,26 @@ export default function ExerciseList({
                   <strong className="truncate" title={ex.name}>
                     {ex.name}
                   </strong>
-                  {hasDescription && (
-                    <span className={`expand-chevron ${isOpen ? "open" : ""}`}>
-                      ▾
-                    </span>
-                  )}
+                  <div
+                    className="card-head-actions"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {hasDescription && (
+                      <span
+                        className={`expand-chevron ${isOpen ? "open" : ""}`}
+                      >
+                        ▾
+                      </span>
+                    )}
+                    <button
+                      className="btn icon-btn danger"
+                      onClick={() => onDelete(ex.id)}
+                      title="Удалить"
+                      aria-label="Удалить упражнение"
+                    >
+                      🗑
+                    </button>
+                  </div>
                 </div>
 
                 {hasDescription && (
@@ -73,25 +87,27 @@ export default function ExerciseList({
                   </p>
                 )}
 
-                <div className="badges">
+                <div className="badges" onClick={(e) => e.stopPropagation()}>
                   <span>⏱ {fmtShort(ex.prepare)}</span>
                   <span>💪 {fmtShort(ex.exercise)}</span>
                   <span>😮‍💨 {fmtShort(ex.rest)}</span>
                   <span>🔁 {ex.rounds}</span>
-                </div>
-
-                <div className="actions" onClick={(e) => e.stopPropagation()}>
-                  <button className="btn primary" onClick={() => onStart(ex)}>
-                    ▶ Старт
-                  </button>
-                  <button className="btn" onClick={() => onEdit(ex)}>
+                  <button
+                    className="btn icon-btn"
+                    onClick={() => onEdit(ex)}
+                    title="Редактировать"
+                    aria-label="Редактировать упражнение"
+                  >
                     ✏
                   </button>
-                  <button
-                    className="btn danger"
-                    onClick={() => onDelete(ex.id)}
-                  >
-                    🗑
+                </div>
+
+                <div
+                  className="actions center"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <button className="btn primary" onClick={() => onStart(ex)}>
+                    ▶ Старт
                   </button>
                 </div>
               </li>

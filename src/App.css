@@ -158,12 +158,6 @@ input:focus, textarea:focus, select:focus {
   min-width: 0;
 }
 
-.list-title {
-  margin: 0;
-  font-size: 1.1rem;
-  color: #e2e8f0;
-}
-
 /* ---------- Форма: сетка времени ---------- */
 .time-grid {
   display: grid;
@@ -266,6 +260,20 @@ input:focus, textarea:focus, select:focus {
 
 .btn.small { padding: 4px 8px; font-size: 0.8rem; }
 
+/* ---------- Маленькая кнопка-иконка ---------- */
+.btn.icon-btn {
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  line-height: 1;
+  border-radius: 8px;
+  flex: 0 0 auto;
+}
+
 /* ---------- Списки ---------- */
 .list {
   list-style: none;
@@ -285,10 +293,19 @@ input:focus, textarea:focus, select:focus {
   min-width: 0;
 }
 
+/* Правая группа в строке названия (стрелка + корзина) */
+.card-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+
 .badges {
   display: flex;
   gap: 6px;
   flex-wrap: wrap;
+  align-items: center;
   margin: 8px 0;
 }
 
@@ -299,6 +316,11 @@ input:focus, textarea:focus, select:focus {
   padding: 3px 8px;
   border-radius: 6px;
   color: #94a3b8;
+}
+
+/* Кнопка ✏ внутри бейджей прижата вправо */
+.badges .btn.icon-btn {
+  margin-left: auto;
 }
 
 .muted { color: #94a3b8; }
@@ -871,4 +893,10 @@ input:focus, textarea:focus, select:focus {
   .timer-card { min-height: 460px; }
   .timer-close { width: 32px; height: 32px; }
   .timer-top { min-height: 32px; }
+
+  .btn.icon-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 0.85rem;
+  }
 }

@@ -9,7 +9,6 @@ export default function WorkoutList({
   return (
     <div className="list-block">
       <div className="list-header">
-        <h3 className="list-title">Тренировки</h3>
         <button
           className="btn primary"
           onClick={onCreate}
@@ -34,8 +33,19 @@ export default function WorkoutList({
                 <strong className="truncate" title={w.name}>
                   {w.name}
                 </strong>
-                <span className="muted small">{w.items.length} упражнений</span>
+                <div className="card-head-actions">
+                  <span className="muted small">{w.items.length} упр.</span>
+                  <button
+                    className="btn icon-btn danger"
+                    onClick={() => onDelete(w.id)}
+                    title="Удалить"
+                    aria-label="Удалить тренировку"
+                  >
+                    🗑
+                  </button>
+                </div>
               </div>
+
               <ul className="workout-preview">
                 {w.items.map((it, i) => {
                   const ex = exercises.find((e) => e.id === it.exerciseId);
@@ -47,15 +57,21 @@ export default function WorkoutList({
                   );
                 })}
               </ul>
-              <div className="actions">
-                <button className="btn primary" onClick={() => onStart(w)}>
-                  ▶ Старт
-                </button>
-                <button className="btn" onClick={() => onEdit(w)}>
+
+              <div className="badges">
+                <button
+                  className="btn icon-btn"
+                  onClick={() => onEdit(w)}
+                  title="Редактировать"
+                  aria-label="Редактировать тренировку"
+                >
                   ✏
                 </button>
-                <button className="btn danger" onClick={() => onDelete(w.id)}>
-                  🗑
+              </div>
+
+              <div className="actions center">
+                <button className="btn primary" onClick={() => onStart(w)}>
+                  ▶ Старт
                 </button>
               </div>
             </li>
