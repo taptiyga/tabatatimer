@@ -39,6 +39,7 @@ export default function Timer({
     isRunning,
     isFinished,
     start,
+    restart,
     pause,
     resume,
     skip,
@@ -77,7 +78,13 @@ export default function Timer({
       <div className="timer-card finished">
         <TopBar onClose={onClose} />
         <h2>🎉 Готово!</h2>
-        <button className="btn primary" onClick={prevStep}>
+        <button
+          className="btn primary"
+          onClick={() => {
+            unlockAudio();
+            restart();
+          }}
+        >
           ⏮ Начать сначала
         </button>
       </div>

@@ -9,7 +9,7 @@ const empty = {
   prepare: 10,
   exercise: 20,
   rest: 10,
-  rounds: 8,
+  rounds: 3,
 };
 
 export default function ExerciseForm({ onSubmit, initial = null, onCancel }) {

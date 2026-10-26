@@ -11,7 +11,17 @@ body {
 .app {
   max-width: 720px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 10px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 /* ---------- Шапка с кнопкой настроек ---------- */
@@ -433,6 +443,8 @@ input:focus, textarea:focus, select:focus {
   padding: 16px 24px 24px;
   position: relative;
   min-height: 520px;
+  margin: auto;           /* ← центрирование по вертикали и горизонтали */
+  width: 100%;
 }
 
 /* Строка сверху с крестиком */
@@ -536,7 +548,11 @@ input:focus, textarea:focus, select:focus {
   color: #f1f5f9;
   font-variant-numeric: tabular-nums;
 }
-
+.finished{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
 .finished h2 { margin-bottom: 16px; }
 
 .timer-clickable {

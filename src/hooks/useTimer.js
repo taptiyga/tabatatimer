@@ -20,10 +20,12 @@ export function useTimer({ soundEnabled = true } = {}) {
   const soundRef = useRef(soundEnabled);
   const lastTickRef = useRef(null);
 
-  // Актуальные значения — в ref, чтобы интервал не пересоздавался
   const stepsRef = useRef(steps);
   const indexRef = useRef(currentIndex);
   const timeLeftRef = useRef(timeLeft);
+
+  // Исходный список шагов — чтобы restart запускал с начала
+  const originalStepsRef = useRef([]);
 
   useEffect(() => {
     soundRef.current = soundEnabled;
@@ -55,6 +57,7 @@ export function useTimer({ soundEnabled = true } = {}) {
   const start = useCallback((newSteps) => {
     clearIntervalSafe();
     finishedRef.current = false;
+    originalStepsRef.current = newSteps;
     setSteps(newSteps);
     stepsRef.current = newSteps;
     setCurrentIndex(0);
@@ -65,6 +68,26 @@ export function useTimer({ soundEnabled = true } = {}) {
     setIsRunning(true);
     lastTickRef.current = null;
     playForStep(newSteps[0]);
+    requestWakeLock();
+  }, []);
+
+  // Перезапуск с начала — берём исходный список шагов
+  const restart = useCallback(() => {
+    const original = originalStepsRef.current;
+    if (!original.length) return;
+
+    clearIntervalSafe();
+    finishedRef.current = false;
+    setSteps(original);
+    stepsRef.current = original;
+    setCurrentIndex(0);
+    indexRef.current = 0;
+    setTimeLeft(original[0]?.duration || 0);
+    timeLeftRef.current = original[0]?.duration || 0;
+    setIsFinished(false);
+    setIsRunning(true);
+    lastTickRef.current = null;
+    playForStep(original[0]);
     requestWakeLock();
   }, []);
 
@@ -91,6 +114,7 @@ export function useTimer({ soundEnabled = true } = {}) {
     setIsFinished(false);
     setSteps([]);
     stepsRef.current = [];
+    originalStepsRef.current = [];
     lastTickRef.current = null;
     releaseWakeLock();
   }, []);
@@ -100,8 +124,6 @@ export function useTimer({ soundEnabled = true } = {}) {
     timeLeftRef.current = 0;
   }, []);
 
-  // Назад к предыдущему шагу.
-  // Если это первый шаг — перезапускаем таймер с самого начала.
   const prevStep = useCallback(() => {
     const list = stepsRef.current;
     if (!list.length) return;
@@ -118,17 +140,14 @@ export function useTimer({ soundEnabled = true } = {}) {
     setCurrentIndex(targetIdx);
     setTimeLeft(targetStep.duration);
     setIsFinished(false);
-    // Звук не играем
   }, []);
 
-  // Единый таймер: тик и переход к следующему шагу.
   useEffect(() => {
     if (!isRunning) return;
 
     intervalRef.current = setInterval(() => {
       const prev = timeLeftRef.current;
 
-      // Тик на последних 3 секундах
       if (
         soundRef.current &&
         prev > 0 &&
@@ -146,7 +165,6 @@ export function useTimer({ soundEnabled = true } = {}) {
         return;
       }
 
-      // prev === 0 → переходим к следующему шагу
       const idx = indexRef.current;
       const list = stepsRef.current;
       const nextIdx = idx + 1;
@@ -185,6 +203,7 @@ export function useTimer({ soundEnabled = true } = {}) {
     isRunning,
     isFinished,
     start,
+    restart,
     pause,
     resume,
     stop,
