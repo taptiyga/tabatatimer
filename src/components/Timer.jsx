@@ -45,6 +45,8 @@ export default function Timer({
     skip,
     prevStep,
     totalSteps,
+    totalTimeLeft,
+    totalDuration,
   } = timer;
 
   const lastStepsRef = useRef(null);
@@ -73,6 +75,12 @@ export default function Timer({
 
   const dashOffset = CIRCUMFERENCE * (1 - progress);
 
+  // Общий прогресс всей сессии (0 → 1)
+  const sessionProgress =
+    totalDuration > 0
+      ? Math.min(1, Math.max(0, 1 - totalTimeLeft / totalDuration))
+      : 0;
+
   if (isFinished) {
     return (
       <div className="timer-card finished">
@@ -100,6 +108,10 @@ export default function Timer({
     );
   }
 
+  const exerciseLabel = currentStep.exerciseTotal
+    ? `Упражнение ${currentStep.exerciseIndex}/${currentStep.exerciseTotal}`
+    : `Шаг ${currentIndex + 1}/${totalSteps}`;
+
   return (
     <div
       className="timer-card timer-clickable"
@@ -117,14 +129,20 @@ export default function Timer({
       <TopBar onClose={onClose} />
 
       <div className="timer-meta">
-        <span>
-          Шаг {currentIndex + 1} / {totalSteps}
-        </span>
-        {currentStep.round && (
-          <span>
+        {/* Фоновая заливка прогресса */}
+        <div
+          className="timer-meta-progress"
+          style={{ width: `${sessionProgress * 100}%` }}
+        />
+        <span className="meta-left">{exerciseLabel}</span>
+        <span className="meta-center">{fmtClock(totalTimeLeft)}</span>
+        {currentStep.round ? (
+          <span className="meta-right">
             Раунд {currentStep.round}
-            {currentStep.totalRounds ? ` / ${currentStep.totalRounds}` : ""}
+            {currentStep.totalRounds ? `/${currentStep.totalRounds}` : ""}
           </span>
+        ) : (
+          <span className="meta-right" />
         )}
       </div>
 

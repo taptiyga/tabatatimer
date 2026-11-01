@@ -1,6 +1,3 @@
-// Утилиты построения шагов таймера.
-// Вынесено из Timer.jsx, чтобы Fast Refresh работал корректно.
-
 export function buildStepsForExercise(ex) {
   const steps = [];
   for (let r = 1; r <= ex.rounds; r++) {
@@ -30,14 +27,25 @@ export function buildStepsForExercise(ex) {
       });
     }
   }
-  return steps;
+  // Одиночное упражнение — 1/1
+  return steps.map((s) => ({ ...s, exerciseIndex: 1, exerciseTotal: 1 }));
 }
 
 export function buildStepsForWorkout(workout, exercises) {
+  const valid = workout.items
+    .map((item) => exercises.find((e) => e.id === item.exerciseId))
+    .filter(Boolean);
+
   const steps = [];
-  workout.items.forEach((item) => {
-    const ex = exercises.find((e) => e.id === item.exerciseId);
-    if (ex) steps.push(...buildStepsForExercise(ex));
+  valid.forEach((ex, i) => {
+    const exerciseSteps = buildStepsForExercise(ex);
+    exerciseSteps.forEach((s) => {
+      steps.push({
+        ...s,
+        exerciseIndex: i + 1,
+        exerciseTotal: valid.length,
+      });
+    });
   });
   return steps;
 }

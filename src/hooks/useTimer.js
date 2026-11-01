@@ -8,6 +8,13 @@ import {
 } from "../utils/sounds";
 import { requestWakeLock, releaseWakeLock } from "../utils/wakeLock";
 
+// Длительность шага для подсчёта общего времени.
+// Первому и последнему — без надбавки, остальным +1 сек.
+function stepPaddingDuration(step, index, totalSteps) {
+  if (index === 0 || index === totalSteps - 1) return step.duration;
+  return step.duration + 1;
+}
+
 export function useTimer({ soundEnabled = true } = {}) {
   const [steps, setSteps] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -23,8 +30,6 @@ export function useTimer({ soundEnabled = true } = {}) {
   const stepsRef = useRef(steps);
   const indexRef = useRef(currentIndex);
   const timeLeftRef = useRef(timeLeft);
-
-  // Исходный список шагов — чтобы restart запускал с начала
   const originalStepsRef = useRef([]);
 
   useEffect(() => {
@@ -71,7 +76,6 @@ export function useTimer({ soundEnabled = true } = {}) {
     requestWakeLock();
   }, []);
 
-  // Перезапуск с начала — берём исходный список шагов
   const restart = useCallback(() => {
     const original = originalStepsRef.current;
     if (!original.length) return;
@@ -196,6 +200,23 @@ export function useTimer({ soundEnabled = true } = {}) {
   const currentStep = steps[currentIndex] || null;
   const totalSteps = steps.length;
 
+  // Общий остаток: текущий — реальный timeLeft,
+  // остальные после него — duration + надбавка (кроме первого/последнего)
+  const totalTimeLeft = (() => {
+    if (!steps.length) return 0;
+    let sum = timeLeft;
+    for (let i = currentIndex + 1; i < steps.length; i++) {
+      sum += stepPaddingDuration(steps[i], i, steps.length);
+    }
+    return sum;
+  })();
+
+  // Общая длительность для прогресс-бара
+  const totalDuration = steps.reduce(
+    (acc, s, i) => acc + stepPaddingDuration(s, i, steps.length),
+    0,
+  );
+
   return {
     currentStep,
     currentIndex,
@@ -210,5 +231,7 @@ export function useTimer({ soundEnabled = true } = {}) {
     skip,
     prevStep,
     totalSteps,
+    totalTimeLeft,
+    totalDuration,
   };
 }
