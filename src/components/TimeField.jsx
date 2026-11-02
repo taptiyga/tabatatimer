@@ -5,6 +5,8 @@ import { fmtShort } from "../utils/format";
 export default function TimeField({ label, value, onChange, min = 0 }) {
   const [open, setOpen] = useState(false);
 
+  const display = value > 0 ? fmtShort(value) : "—";
+
   return (
     <>
       <div className="time-field">
@@ -13,8 +15,10 @@ export default function TimeField({ label, value, onChange, min = 0 }) {
           type="button"
           className="time-field-value"
           onClick={() => setOpen(true)}
+          title={`Изменить «${label}»`}
+          aria-label={`${label}: ${display}. Нажмите, чтобы изменить`}
         >
-          {value > 0 ? fmtShort(value) : "—"}
+          {display}
         </button>
       </div>
 

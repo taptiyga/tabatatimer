@@ -16,18 +16,30 @@ export default function ExerciseForm({ onSubmit, initial = null, onCancel }) {
   const [form, setForm] = useState(initial ? { ...initial } : { ...empty });
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === "number" ? Number(value) : value,
+    }));
   };
 
   const setTime = (field) => (seconds) => {
     setForm((prev) => ({ ...prev, [field]: seconds }));
   };
 
+  const setNumber = (field) => (value) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!form.name.trim()) return;
-    onSubmit(form);
+    const name = form.name.trim();
+    if (!name) return;
+    onSubmit({
+      ...form,
+      name,
+      description: form.description.trim(),
+    });
   };
 
   return (
@@ -76,7 +88,7 @@ export default function ExerciseForm({ onSubmit, initial = null, onCancel }) {
             value={form.rest}
             onChange={setTime("rest")}
           />
-          <RoundsField value={form.rounds} onChange={setTime("rounds")} />
+          <RoundsField value={form.rounds} onChange={setNumber("rounds")} />
         </div>
 
         <div className="modal-actions">

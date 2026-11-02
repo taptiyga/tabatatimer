@@ -8,9 +8,16 @@ function getCtx() {
   if (!ctx) {
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
     if (!AudioCtx) return null;
-    ctx = new AudioCtx();
+    try {
+      ctx = new AudioCtx();
+    } catch {
+      return null;
+    }
   }
-  if (ctx.state === "suspended") ctx.resume();
+  if (ctx.state === "suspended") {
+    // resume() асинхронный — не await, чтобы не блокировать
+    ctx.resume().catch(() => {});
+  }
   return ctx;
 }
 
@@ -40,10 +47,11 @@ export const playPrepare = () => beep(660, 0.2, 0.5);
 export const playExercise = () => beep(1046, 0.25, 0.6);
 export const playRest = () => beep(440, 0.25, 0.5);
 export const playTick = () => beep(1200, 0.08, 0.35);
+
 export const playFinish = () => {
-  beep(880, 0.2, 0.6);
-  setTimeout(() => beep(1100, 0.2, 0.6), 220);
-  setTimeout(() => beep(1320, 0.35, 0.7), 440);
+  beep(880, 0.2, 0.4);
+  setTimeout(() => beep(1100, 0.2, 0.4), 220);
+  setTimeout(() => beep(1320, 0.35, 0.5), 440);
 };
 
 export function unlockAudio() {

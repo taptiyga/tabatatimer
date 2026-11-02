@@ -39,38 +39,47 @@ export default function WorkoutList({
                     className="btn icon-btn danger"
                     onClick={() => onDelete(w.id)}
                     title="Удалить"
-                    aria-label="Удалить тренировку"
+                    aria-label={`Удалить тренировку «${w.name}»`}
                   >
                     🗑
                   </button>
                 </div>
               </div>
 
-              <ul className="workout-preview">
-                {w.items.map((it, i) => {
-                  const ex = exercises.find((e) => e.id === it.exerciseId);
-                  const label = ex ? ex.name : "—";
-                  return (
-                    <li key={i} className="truncate" title={label}>
-                      {label}
-                    </li>
-                  );
-                })}
-              </ul>
+              {w.items.length > 0 ? (
+                <ul className="workout-preview">
+                  {w.items.map((it, i) => {
+                    const ex = exercises.find((e) => e.id === it.exerciseId);
+                    const label = ex ? ex.name : "—";
+                    return (
+                      <li key={it.uid || i} className="truncate" title={label}>
+                        {label}
+                      </li>
+                    );
+                  })}
+                </ul>
+              ) : (
+                <p className="muted small">Упражнения удалены</p>
+              )}
 
               <div className="badges">
                 <button
                   className="btn icon-btn"
                   onClick={() => onEdit(w)}
                   title="Редактировать"
-                  aria-label="Редактировать тренировку"
+                  aria-label={`Редактировать тренировку «${w.name}»`}
                 >
                   ✏
                 </button>
               </div>
 
               <div className="actions center">
-                <button className="btn primary" onClick={() => onStart(w)}>
+                <button
+                  className="btn primary"
+                  onClick={() => onStart(w)}
+                  title={`Запустить тренировку «${w.name}»`}
+                  aria-label={`Запустить тренировку «${w.name}»`}
+                >
                   ▶ Старт
                 </button>
               </div>

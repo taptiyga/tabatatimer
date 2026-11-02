@@ -46,6 +46,7 @@ export default function ExerciseList({
                 tabIndex={hasDescription ? 0 : undefined}
                 onKeyDown={(e) => {
                   if (!hasDescription) return;
+                  if (e.target !== e.currentTarget) return;
                   if (e.key === " " || e.key === "Enter") {
                     e.preventDefault();
                     toggle(ex.id);
@@ -57,20 +58,34 @@ export default function ExerciseList({
                   <strong className="truncate" title={ex.name}>
                     {ex.name}
                   </strong>
-                  <div
-                    className="card-head-actions"
-                    onClick={(e) => e.stopPropagation()}
-                  >
+                  <div className="card-head-actions">
                     {hasDescription && (
                       <span
                         className={`expand-chevron ${isOpen ? "open" : ""}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggle(ex.id);
+                        }}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                          if (e.key === " " || e.key === "Enter") {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            toggle(ex.id);
+                          }
+                        }}
+                        aria-label={isOpen ? "Свернуть" : "Развернуть"}
                       >
                         ▾
                       </span>
                     )}
                     <button
                       className="btn icon-btn danger"
-                      onClick={() => onDelete(ex.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDelete(ex.id);
+                      }}
                       title="Удалить"
                       aria-label="Удалить упражнение"
                     >
@@ -87,14 +102,17 @@ export default function ExerciseList({
                   </p>
                 )}
 
-                <div className="badges" onClick={(e) => e.stopPropagation()}>
+                <div className="badges">
                   <span>⏱ {fmtShort(ex.prepare)}</span>
                   <span>💪 {fmtShort(ex.exercise)}</span>
                   <span>😮‍💨 {fmtShort(ex.rest)}</span>
                   <span>🔁 {ex.rounds}</span>
                   <button
                     className="btn icon-btn"
-                    onClick={() => onEdit(ex)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onEdit(ex);
+                    }}
                     title="Редактировать"
                     aria-label="Редактировать упражнение"
                   >
@@ -102,11 +120,14 @@ export default function ExerciseList({
                   </button>
                 </div>
 
-                <div
-                  className="actions center"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <button className="btn primary" onClick={() => onStart(ex)}>
+                <div className="actions center">
+                  <button
+                    className="btn primary"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onStart(ex);
+                    }}
+                  >
                     ▶ Старт
                   </button>
                 </div>

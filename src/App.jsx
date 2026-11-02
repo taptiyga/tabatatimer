@@ -20,10 +20,12 @@ import {
 import "./App.css";
 
 const uid = () =>
-  Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  typeof crypto !== "undefined" && crypto.randomUUID
+    ? crypto.randomUUID()
+    : Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
 
 export default function App() {
-  const [tab, setTab] = useState("exercises"); // стартовая вкладка — упражнения
+  const [tab, setTab] = useState("exercises");
   const [exercises, setExercises] = useState(() => loadExercises());
   const [workouts, setWorkouts] = useState(() => loadWorkouts());
   const [editingExercise, setEditingExercise] = useState(null);
@@ -31,8 +33,6 @@ export default function App() {
   const [pendingSteps, setPendingSteps] = useState(null);
   const [soundEnabled, setSoundEnabled] = useState(loadSound);
   const [settingsOpen, setSettingsOpen] = useState(false);
-
-  // true, когда таймер запущен (есть шаги и он не закрыт)
   const [timerActive, setTimerActive] = useState(false);
 
   useEffect(() => saveExercises(exercises), [exercises]);
@@ -103,13 +103,11 @@ export default function App() {
   const startExercise = (ex) => {
     setPendingSteps(buildStepsForExercise(ex));
     setTimerActive(true);
-    setTab("timer");
   };
 
   const startWorkout = (w) => {
     setPendingSteps(buildStepsForWorkout(w, exercises));
     setTimerActive(true);
-    setTab("timer");
   };
 
   const closeTimer = () => {
@@ -134,12 +132,13 @@ export default function App() {
     a.href = url;
     a.download = `tabata-backup-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
-    URL.revokeObjectURL(url);
+    // Safari может скачивать асинхронно — откладываем revoke
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
 
   const importData = (data) => {
-    setExercises(data.exercises);
-    setWorkouts(data.workouts);
+    if (Array.isArray(data.exercises)) setExercises(data.exercises);
+    if (Array.isArray(data.workouts)) setWorkouts(data.workouts);
     if (typeof data.soundEnabled === "boolean") {
       setSoundEnabled(data.soundEnabled);
     }
@@ -160,7 +159,6 @@ export default function App() {
           </button>
         </div>
 
-        {/* Вкладки видны только когда таймер НЕ запущен */}
         {!timerActive && (
           <nav className="tabs">
             <button
@@ -180,7 +178,6 @@ export default function App() {
       </header>
 
       <main>
-        {/* Таймер виден только когда запущен */}
         {timerActive && (
           <Timer
             startSteps={pendingSteps}

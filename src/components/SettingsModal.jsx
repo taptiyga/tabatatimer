@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useId, useState } from "react";
 
 export default function SettingsModal({
   soundEnabled,
@@ -8,6 +8,20 @@ export default function SettingsModal({
   onClose,
 }) {
   const [importError, setImportError] = useState("");
+  const titleId = useId();
+
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    const prevOverflow = document.body.style.overflow;
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [onClose]);
 
   const handleFile = (event) => {
     const file = event.target.files?.[0];
@@ -31,13 +45,24 @@ export default function SettingsModal({
         setImportError("Не удалось прочитать файл");
       }
     };
+    reader.onerror = () => {
+      setImportError("Не удалось прочитать файл");
+    };
     reader.readAsText(file);
   };
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal" onClick={(e) => e.stopPropagation()}>
-        <h3 className="modal-title">⚙ Настройки</h3>
+      <div
+        className="modal"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+      >
+        <h3 className="modal-title" id={titleId}>
+          ⚙ Настройки
+        </h3>
 
         <div className="settings-list">
           <div className="settings-row">
@@ -46,6 +71,7 @@ export default function SettingsModal({
               type="button"
               className={`btn ${soundEnabled ? "primary" : ""}`}
               onClick={onToggleSound}
+              aria-pressed={soundEnabled}
             >
               {soundEnabled ? "🔊 Вкл" : "🔇 Выкл"}
             </button>
@@ -60,7 +86,7 @@ export default function SettingsModal({
 
           <div className="settings-row">
             <span className="settings-label">Восстановить</span>
-            <label className="btn">
+            <label className="btn" aria-label="Импортировать данные из файла">
               📤 Импорт
               <input
                 type="file"

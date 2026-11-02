@@ -2,30 +2,43 @@ const EXERCISES_KEY = "tabata_exercises";
 const WORKOUTS_KEY = "tabata_workouts";
 const SOUND_KEY = "tabata_sound_enabled";
 
-export const loadExercises = () => {
+// Безопасное чтение массива из localStorage
+const loadArray = (key) => {
   try {
-    return JSON.parse(localStorage.getItem(EXERCISES_KEY)) || [];
+    const parsed = JSON.parse(localStorage.getItem(key));
+    return Array.isArray(parsed) ? parsed : [];
   } catch {
     return [];
   }
 };
 
-export const saveExercises = (exercises) => {
-  localStorage.setItem(EXERCISES_KEY, JSON.stringify(exercises));
-};
-
-export const loadWorkouts = () => {
+// Безопасная запись массива (защита от QuotaExceededError)
+const saveArray = (key, value) => {
   try {
-    return JSON.parse(localStorage.getItem(WORKOUTS_KEY)) || [];
-  } catch {
-    return [];
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (err) {
+    console.warn(`Не удалось сохранить "${key}":`, err);
   }
 };
 
-export const saveWorkouts = (workouts) => {
-  localStorage.setItem(WORKOUTS_KEY, JSON.stringify(workouts));
+export const loadExercises = () => loadArray(EXERCISES_KEY);
+export const saveExercises = (exercises) => saveArray(EXERCISES_KEY, exercises);
+
+export const loadWorkouts = () => loadArray(WORKOUTS_KEY);
+export const saveWorkouts = (workouts) => saveArray(WORKOUTS_KEY, workouts);
+
+export const loadSound = () => {
+  try {
+    return localStorage.getItem(SOUND_KEY) !== "false";
+  } catch {
+    return true;
+  }
 };
 
-export const loadSound = () => localStorage.getItem(SOUND_KEY) !== "false";
-export const saveSound = (enabled) =>
-  localStorage.setItem(SOUND_KEY, String(enabled));
+export const saveSound = (enabled) => {
+  try {
+    localStorage.setItem(SOUND_KEY, String(enabled));
+  } catch (err) {
+    console.warn("Не удалось сохранить настройку звука:", err);
+  }
+};

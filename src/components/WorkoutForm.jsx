@@ -1,6 +1,11 @@
 import { useState } from "react";
 import FormModal from "./FormModal";
 
+const makeUid = () =>
+  typeof crypto !== "undefined" && crypto.randomUUID
+    ? crypto.randomUUID()
+    : String(Date.now() + Math.random());
+
 export default function WorkoutForm({
   exercises,
   onSubmit,
@@ -15,7 +20,7 @@ export default function WorkoutForm({
     if (!selectedId) return;
     const ex = exercises.find((e) => e.id === selectedId);
     if (!ex) return;
-    setItems((prev) => [...prev, { exerciseId: ex.id }]);
+    setItems((prev) => [...prev, { exerciseId: ex.id, uid: makeUid() }]);
   };
 
   const removeItem = (index) => {
@@ -84,7 +89,7 @@ export default function WorkoutForm({
             {items.map((item, i) => {
               const ex = exercises.find((e) => e.id === item.exerciseId);
               return (
-                <li key={i}>
+                <li key={item.uid || `idx-${i}`}>
                   <span className="truncate" title={ex ? ex.name : "Удалено"}>
                     {ex ? ex.name : "Удалено"}
                   </span>
@@ -93,6 +98,8 @@ export default function WorkoutForm({
                       type="button"
                       className="btn small"
                       onClick={() => move(i, -1)}
+                      disabled={i === 0}
+                      title="Выше"
                     >
                       ↑
                     </button>
@@ -100,6 +107,8 @@ export default function WorkoutForm({
                       type="button"
                       className="btn small"
                       onClick={() => move(i, 1)}
+                      disabled={i === items.length - 1}
+                      title="Ниже"
                     >
                       ↓
                     </button>
@@ -107,6 +116,7 @@ export default function WorkoutForm({
                       type="button"
                       className="btn small danger"
                       onClick={() => removeItem(i)}
+                      title="Удалить"
                     >
                       ✕
                     </button>

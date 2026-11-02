@@ -8,13 +8,6 @@ import {
 } from "../utils/sounds";
 import { requestWakeLock, releaseWakeLock } from "../utils/wakeLock";
 
-// Длительность шага для подсчёта общего времени.
-// Первому и последнему — без надбавки, остальным +1 сек.
-function stepPaddingDuration(step, index, totalSteps) {
-  if (index === 0 || index === totalSteps - 1) return step.duration;
-  return step.duration + 1;
-}
-
 export function useTimer({ soundEnabled = true } = {}) {
   const [steps, setSteps] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -200,20 +193,23 @@ export function useTimer({ soundEnabled = true } = {}) {
   const currentStep = steps[currentIndex] || null;
   const totalSteps = steps.length;
 
-  // Общий остаток: текущий — реальный timeLeft,
-  // остальные после него — duration + надбавка (кроме первого/последнего)
+  // Общий остаток: сумма duration оставшихся шагов + текущий timeLeft
+  // +1 секунда на каждый шаг, кроме последнего (переход между шагами)
   const totalTimeLeft = (() => {
     if (!steps.length) return 0;
-    let sum = timeLeft;
+    const isLastStep = currentIndex >= steps.length - 1;
+    let sum = timeLeft + (isLastStep ? 0 : 1);
     for (let i = currentIndex + 1; i < steps.length; i++) {
-      sum += stepPaddingDuration(steps[i], i, steps.length);
+      const isLast = i === steps.length - 1;
+      sum += steps[i].duration + (isLast ? 0 : 1);
     }
     return sum;
   })();
 
-  // Общая длительность для прогресс-бара
+  // Общая длительность: сумма duration всех шагов + по 1 секунде на каждый шаг,
+  // кроме последнего
   const totalDuration = steps.reduce(
-    (acc, s, i) => acc + stepPaddingDuration(s, i, steps.length),
+    (acc, s, i) => acc + s.duration + (i === steps.length - 1 ? 0 : 1),
     0,
   );
 

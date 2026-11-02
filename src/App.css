@@ -229,7 +229,7 @@ input:focus, textarea:focus, select:focus {
 .actions {
   display: flex;
   gap: 8px;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
 }
 
 .actions.center {
@@ -509,7 +509,7 @@ input:focus, textarea:focus, select:focus {
   left: 0;
   bottom: 0;
   background: #1e40af;
-  border-radius: 10px 0 0 10px;
+  border-radius: 10px;
   transition: width 1s linear;
   z-index: 0;
 }
@@ -599,13 +599,17 @@ input:focus, textarea:focus, select:focus {
   font-variant-numeric: tabular-nums;
 }
 
+/* Экран завершения: по центру, компактно */
 .finished {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  min-height: auto;
 }
 
-.finished h2 { margin-bottom: 16px; }
+.finished h2 { margin: 0; }
 
 .timer-clickable {
   cursor: pointer;

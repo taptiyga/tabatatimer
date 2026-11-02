@@ -1,34 +1,48 @@
-export function buildStepsForExercise(ex) {
+export function buildStepsForExercise(
+  ex,
+  exerciseIndex = 1,
+  exerciseTotal = 1,
+) {
+  const rounds = Math.max(1, ex.rounds || 1);
+  const exerciseDuration = Math.max(1, ex.exercise || 1);
+  const prepareDuration = Math.max(0, ex.prepare || 0);
+  const restDuration = Math.max(0, ex.rest || 0);
+
   const steps = [];
-  for (let r = 1; r <= ex.rounds; r++) {
-    if (ex.prepare > 0 && r === 1) {
+  for (let r = 1; r <= rounds; r++) {
+    if (prepareDuration > 0 && r === 1) {
       steps.push({
         type: "prepare",
-        duration: ex.prepare,
+        duration: prepareDuration,
         exerciseName: ex.name,
         round: r,
-        totalRounds: ex.rounds,
+        totalRounds: rounds,
+        exerciseIndex,
+        exerciseTotal,
       });
     }
     steps.push({
       type: "exercise",
-      duration: ex.exercise,
+      duration: exerciseDuration,
       exerciseName: ex.name,
       round: r,
-      totalRounds: ex.rounds,
+      totalRounds: rounds,
+      exerciseIndex,
+      exerciseTotal,
     });
-    if (ex.rest > 0 && r < ex.rounds) {
+    if (restDuration > 0 && r < rounds) {
       steps.push({
         type: "rest",
-        duration: ex.rest,
+        duration: restDuration,
         exerciseName: ex.name,
         round: r,
-        totalRounds: ex.rounds,
+        totalRounds: rounds,
+        exerciseIndex,
+        exerciseTotal,
       });
     }
   }
-  // Одиночное упражнение — 1/1
-  return steps.map((s) => ({ ...s, exerciseIndex: 1, exerciseTotal: 1 }));
+  return steps;
 }
 
 export function buildStepsForWorkout(workout, exercises) {
@@ -38,14 +52,7 @@ export function buildStepsForWorkout(workout, exercises) {
 
   const steps = [];
   valid.forEach((ex, i) => {
-    const exerciseSteps = buildStepsForExercise(ex);
-    exerciseSteps.forEach((s) => {
-      steps.push({
-        ...s,
-        exerciseIndex: i + 1,
-        exerciseTotal: valid.length,
-      });
-    });
+    steps.push(...buildStepsForExercise(ex, i + 1, valid.length));
   });
   return steps;
 }

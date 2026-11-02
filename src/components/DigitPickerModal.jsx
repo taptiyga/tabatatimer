@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const clampDigit = (v, max) => Math.max(0, Math.min(max, v));
 
@@ -27,7 +27,7 @@ export default function DigitPickerModal({
     let remaining = initialValue;
     const result = [];
     for (let i = limits.length - 1; i >= 0; i--) {
-      const base = limits[i] === 9 ? 10 : 6;
+      const base = limits[i] + 1;
       const digit = remaining % base;
       remaining = Math.floor(remaining / base);
       result[i] = Math.min(digit, limits[i]);
@@ -36,6 +36,14 @@ export default function DigitPickerModal({
   };
 
   const [digits, setDigits] = useState(buildDigits);
+
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [onClose]);
 
   const setDigit = (index, value) => {
     setDigits((prev) => {
@@ -69,7 +77,7 @@ export default function DigitPickerModal({
       const s = digits[2] * 10 + digits[3];
       return m * 60 + s;
     }
-    const bases = limits.map((l) => (l === 9 ? 10 : 6));
+    const bases = limits.map((l) => l + 1);
     const weights = [];
     let w = 1;
     for (let i = bases.length - 1; i >= 0; i--) {
@@ -85,7 +93,6 @@ export default function DigitPickerModal({
     onSave(Math.max(min, total));
   };
 
-  // Предварительно вычисляем смещения для каждой группы — БЕЗ мутаций в map
   const groupOffsets = [];
   {
     let offset = 0;
@@ -95,9 +102,28 @@ export default function DigitPickerModal({
     }
   }
 
+  const digitLabel = (groupLabel, di) => {
+    if (groupLabel === "мин") {
+      return di === 0 ? "Десятки минут" : "Минуты";
+    }
+    if (groupLabel === "сек") {
+      return di === 0 ? "Десятки секунд" : "Секунды";
+    }
+    return `${groupLabel}: цифра ${di + 1}`;
+  };
+
   return (
     <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="modal"
+        onClick={(e) => e.stopPropagation()}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            handleSave();
+          }
+        }}
+      >
         <h3 className="modal-title">{title}</h3>
 
         <div className="digit-picker">
@@ -121,7 +147,7 @@ export default function DigitPickerModal({
                         type="button"
                         className="digit-btn"
                         onClick={() => inc(groupOffset + di)}
-                        aria-label={`Плюс цифра ${di + 1}`}
+                        aria-label={`Плюс ${digitLabel(group.label, di)}`}
                       >
                         +
                       </button>
@@ -143,7 +169,8 @@ export default function DigitPickerModal({
                             raw === "" ? 0 : Number(raw),
                           );
                         }}
-                        aria-label={`Цифра ${di + 1}`}
+                        autoFocus={gi === 0 && di === 0}
+                        aria-label={digitLabel(group.label, di)}
                       />
                     ))}
                   </div>
@@ -155,7 +182,7 @@ export default function DigitPickerModal({
                         type="button"
                         className="digit-btn"
                         onClick={() => dec(groupOffset + di)}
-                        aria-label={`Минус цифра ${di + 1}`}
+                        aria-label={`Минус ${digitLabel(group.label, di)}`}
                       >
                         −
                       </button>

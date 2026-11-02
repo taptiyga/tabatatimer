@@ -12,6 +12,8 @@ export default function RoundsField({ value, onChange }) {
           type="button"
           className="time-field-value"
           onClick={() => setOpen(true)}
+          title="Изменить количество повторений"
+          aria-label={`Повторений: ${value > 0 ? value : "не задано"}. Нажмите, чтобы изменить`}
         >
           {value > 0 ? value : "—"}
         </button>

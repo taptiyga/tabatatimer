@@ -75,7 +75,6 @@ export default function Timer({
 
   const dashOffset = CIRCUMFERENCE * (1 - progress);
 
-  // Общий прогресс всей сессии (0 → 1)
   const sessionProgress =
     totalDuration > 0
       ? Math.min(1, Math.max(0, 1 - totalTimeLeft / totalDuration))
@@ -119,6 +118,7 @@ export default function Timer({
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
+        if (e.target !== e.currentTarget) return;
         if (e.key === " " || e.key === "Enter") {
           e.preventDefault();
           togglePause();
@@ -129,7 +129,6 @@ export default function Timer({
       <TopBar onClose={onClose} />
 
       <div className="timer-meta">
-        {/* Фоновая заливка прогресса */}
         <div
           className="timer-meta-progress"
           style={{ width: `${sessionProgress * 100}%` }}
@@ -184,10 +183,16 @@ export default function Timer({
           className="btn"
           onClick={prevStep}
           title="Назад к предыдущему шагу"
+          aria-label="Назад к предыдущему шагу"
         >
           ⏮ Назад
         </button>
-        <button className="btn" onClick={skip}>
+        <button
+          className="btn"
+          onClick={skip}
+          title="Пропустить текущий шаг"
+          aria-label="Пропустить текущий шаг"
+        >
           ⏭ Пропустить
         </button>
       </div>
