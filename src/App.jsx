@@ -148,7 +148,7 @@ export default function App() {
     <div className="app">
       <header className="header">
         <div className="header-top">
-          <h1>🏋️ Tabata Timer</h1>
+          <h1>🏋️ Табата Таймер</h1>
           <button
             className="settings-btn"
             onClick={() => setSettingsOpen(true)}
